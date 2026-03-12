@@ -22,10 +22,10 @@ public class BookService {
 
     public BookResponse createBook(BookRequest bookRequest) {
         Book book = new Book(
-                bookRequest.getTitle(),
-                bookRequest.getAuthor(),
-                bookRequest.getIsbn(),
-                bookRequest.getPublishedYear());
+                bookRequest.title(),
+                bookRequest.author(),
+                bookRequest.isbn(),
+                bookRequest.publishedYear());
 
         Book savedBook = bookRepository.save(book);
         return toResponse(savedBook);
