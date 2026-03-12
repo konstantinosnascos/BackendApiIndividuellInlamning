@@ -25,7 +25,8 @@ public class BookService {
                 bookRequest.title(),
                 bookRequest.author(),
                 bookRequest.isbn(),
-                bookRequest.publishedYear());
+                bookRequest.publishedYear(),
+                true);
 
         Book savedBook = bookRepository.save(book);
         return toResponse(savedBook);
