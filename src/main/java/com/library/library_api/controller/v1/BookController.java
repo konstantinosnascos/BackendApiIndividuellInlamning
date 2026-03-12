@@ -1,7 +1,7 @@
-package com.library.library_api.controller;
+package com.library.library_api.controller.v1;
 
-import com.library.library_api.dto.BookRequest;
-import com.library.library_api.dto.BookResponse;
+import com.library.library_api.dto.v1.BookRequest;
+import com.library.library_api.dto.v1.BookResponse;
 import com.library.library_api.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

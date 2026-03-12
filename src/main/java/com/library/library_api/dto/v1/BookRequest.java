@@ -1,4 +1,4 @@
-package com.library.library_api.dto;
+package com.library.library_api.dto.v1;
 
 import jakarta.validation.constraints.NotBlank;
 
