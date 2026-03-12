@@ -20,13 +20,16 @@ public class Book {
 
     private Integer publishedYear;
 
+    private boolean available = true;
+
     public Book() {}
 
-    public Book(String title, String author, String isbn, Integer publishedYear) {
+    public Book(String title, String author, String isbn, Integer publishedYear,  boolean available) {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
         this.publishedYear = publishedYear;
+        this.available = available;
     }
 
     public Long getId() {
@@ -67,5 +70,13 @@ public class Book {
 
     public void setPublishedYear(Integer publishedYear) {
         this.publishedYear = publishedYear;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }
