@@ -3,6 +3,8 @@ package com.library.library_api.controller.v2;
 import com.library.library_api.dto.VersionWrapper;
 import com.library.library_api.dto.v2.BookResponseV2;
 import com.library.library_api.service.BookService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,8 @@ public class BookControllerV2 {
         this.bookService = bookService;
     }
 
+    @Operation(summary = "Get all books (v2)", description = "Return all books with availability in a wrapped response")
+    @ApiResponse(responseCode = "200", description = "Successful retrieval of all books")
     @GetMapping
     public ResponseEntity<VersionWrapper<List<BookResponseV2>>> getAllBooksV2() {
         List<BookResponseV2> books = bookService.getAllBooksV2();
