@@ -1,0 +1,27 @@
+package com.library.library_api.controller.v2;
+
+import com.library.library_api.dto.VersionWrapper;
+import com.library.library_api.dto.v2.BookResponseV2;
+import com.library.library_api.service.BookService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v2/books")
+public class BookControllerV2 {
+    private final BookService bookService;
+
+    public BookControllerV2(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    @GetMapping
+    public ResponseEntity<VersionWrapper<List<BookResponseV2>>> getAllBooksV2() {
+        List<BookResponseV2> books = bookService.getAllBooksV2();
+        VersionWrapper<List<BookResponseV2>> response =
+                new VersionWrapper<>(books, "v2");
+        return ResponseEntity.ok(response);
+    }
+}

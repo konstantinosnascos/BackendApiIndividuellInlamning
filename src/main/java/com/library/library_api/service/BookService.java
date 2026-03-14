@@ -3,6 +3,7 @@ package com.library.library_api.service;
 
 import com.library.library_api.dto.v1.BookRequest;
 import com.library.library_api.dto.v1.BookResponse;
+import com.library.library_api.dto.v2.BookResponseV2;
 import com.library.library_api.exception.BookNotFoundException;
 import com.library.library_api.model.Book;
 import com.library.library_api.repository.BookRepository;
@@ -51,5 +52,23 @@ public class BookService {
     public BookResponse getBookById(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
         return toResponse(book);
+    }
+
+    public List<BookResponseV2> getAllBooksV2() {
+        return bookRepository.findAll()
+                .stream()
+                .map(this::toResponseV2)
+                .collect(Collectors.toList());
+    }
+
+    private BookResponseV2 toResponseV2(Book book) {
+        return new BookResponseV2(
+                book.getId(),
+                book.getTitle(),
+                book.getAuthor(),
+                book.getIsbn(),
+                book.getPublishedYear(),
+                book.isAvailable()
+                );
     }
 }
