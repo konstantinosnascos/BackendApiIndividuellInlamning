@@ -22,6 +22,10 @@ public class Book {
 
     private boolean available = true;
 
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Author authorEntity;
+
     public Book() {}
 
     public Book(String title, String author, String isbn, Integer publishedYear,  boolean available) {
