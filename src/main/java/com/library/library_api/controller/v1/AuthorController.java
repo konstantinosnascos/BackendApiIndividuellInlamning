@@ -25,7 +25,7 @@ public class AuthorController {
         return ResponseEntity.status(HttpStatus.CREATED).body(authorResponse);
     }
 
-    @GetMapping("{/id}")
+    @GetMapping("/{id}")
     public ResponseEntity<AuthorResponse> getAuthorById(@PathVariable long id) {
 
         return ResponseEntity.ok(authorService.getAuthorById(id));
