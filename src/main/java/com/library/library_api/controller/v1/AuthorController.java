@@ -4,6 +4,7 @@ import com.library.library_api.dto.v1.AuthorRequest;
 import com.library.library_api.dto.v1.AuthorResponse;
 import com.library.library_api.dto.v1.BookResponse;
 import com.library.library_api.service.AuthorService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<AuthorResponse> createAuthor(@RequestBody AuthorRequest authorRequest) {
+    public ResponseEntity<AuthorResponse> createAuthor(@Valid @RequestBody AuthorRequest authorRequest) {
         AuthorResponse authorResponse = authorService.createAuthor(authorRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(authorResponse);
     }
