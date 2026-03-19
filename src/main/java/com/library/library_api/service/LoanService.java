@@ -39,8 +39,8 @@ public class LoanService {
                 loan.getId(),
                 loan.getBook().getId(),
                 loan.getBook().getTitle(),
-                loan.getLoandate(),
-                loan.getReturndate()
+                loan.getLoanDate(),
+                loan.getReturnDate()
         );
     }
 }

@@ -17,15 +17,15 @@ public class Loan {
     private Book book;
 
     @Column(nullable = false)
-    private LocalDate loandate;
+    private LocalDate loanDate;
 
-    private LocalDate returndate;
+    private LocalDate returnDate;
 
     public Loan() {}
 
     public Loan(Book book) {
         this.book = book;
-        this.loandate = LocalDate.now();
+        this.loanDate = LocalDate.now();
     }
 
     public Long getId() {
@@ -44,19 +44,19 @@ public class Loan {
         this.book = book;
     }
 
-    public LocalDate getLoandate() {
-        return loandate;
+    public LocalDate getLoanDate() {
+        return loanDate;
     }
 
-    public void setLoandate(LocalDate loandate) {
-        this.loandate = loandate;
+    public void setLoanDate(LocalDate loandate) {
+        this.loanDate = loanDate;
     }
 
-    public LocalDate getReturndate() {
-        return returndate;
+    public LocalDate getReturnDate() {
+        return returnDate;
     }
 
-    public void setReturndate(LocalDate returndate) {
-        this.returndate = returndate;
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 }
