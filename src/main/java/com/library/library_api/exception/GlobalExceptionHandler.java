@@ -44,4 +44,13 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    @ExceptionHandler (BookAlreadyLoanedOutException.class)
+    public ResponseEntity<ErrorResponse> handleBookAlreadyLoanedOut(
+            BookAlreadyLoanedOutException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                400, "Bad Request", ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
 }
