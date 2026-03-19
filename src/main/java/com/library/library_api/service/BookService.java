@@ -5,7 +5,6 @@ import com.library.library_api.dto.v1.BookRequest;
 import com.library.library_api.dto.v1.BookResponse;
 import com.library.library_api.dto.v2.BookResponseV2;
 import com.library.library_api.exception.BookAlreadyLoanedOutException;
-import com.library.library_api.exception.BookNotFoundException;
 import com.library.library_api.model.Book;
 import com.library.library_api.repository.BookRepository;
 import org.springframework.stereotype.Service;
