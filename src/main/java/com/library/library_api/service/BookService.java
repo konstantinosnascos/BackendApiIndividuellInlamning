@@ -4,6 +4,7 @@ package com.library.library_api.service;
 import com.library.library_api.dto.v1.BookRequest;
 import com.library.library_api.dto.v1.BookResponse;
 import com.library.library_api.dto.v2.BookResponseV2;
+import com.library.library_api.exception.BookAlreadyLoanedOutException;
 import com.library.library_api.exception.BookNotFoundException;
 import com.library.library_api.model.Book;
 import com.library.library_api.repository.BookRepository;
@@ -50,7 +51,7 @@ public class BookService {
     }
 
     public BookResponse getBookById(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookAlreadyLoanedOutException(id));
         return toResponse(book);
     }
 
