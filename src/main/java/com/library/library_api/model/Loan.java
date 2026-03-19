@@ -48,7 +48,7 @@ public class Loan {
         return loanDate;
     }
 
-    public void setLoanDate(LocalDate loandate) {
+    public void setLoanDate(LocalDate loanDate) {
         this.loanDate = loanDate;
     }
 

@@ -3,7 +3,7 @@ package com.library.library_api.service;
 
 import com.library.library_api.dto.v1.LoanRequest;
 import com.library.library_api.dto.v1.LoanResponse;
-import com.library.library_api.exception.BookNotFoundException;
+import com.library.library_api.exception.BookAlreadyLoanedOutException;
 import com.library.library_api.model.Book;
 import com.library.library_api.model.Loan;
 import com.library.library_api.repository.BookRepository;
@@ -23,10 +23,10 @@ public class LoanService {
     public LoanResponse createLoan(LoanRequest loanRequest) {
         Book book = bookRepository.findById(
                 loanRequest.bookId())
-                .orElseThrow(() -> new BookNotFoundException(loanRequest.bookId()));
+                .orElseThrow(() -> new BookAlreadyLoanedOutException(loanRequest.bookId()));
         loanRepository.findByBookIdAndReturnDateIsNull(loanRequest.bookId())
                 .ifPresent(loan -> {
-                    throw new BookNotFoundException(loanRequest.bookId());
+                    throw new BookAlreadyLoanedOutException(loanRequest.bookId());
                 });
         Loan loan = new Loan(book);
         Loan savedLoan = loanRepository.save(loan);
