@@ -53,4 +53,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
             }
 
+            @ExceptionHandler (BookAlreadyReturnedException.class)
+    public ResponseEntity<ErrorResponse> handleBookAlreadyReturned(
+            BookAlreadyReturnedException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                 400, "Bad Request", ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            @ExceptionHandler (LoanNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleLoanNotFound(
+            LoanNotFoundException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                  404, "Not Found", ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+            }
+
 }
