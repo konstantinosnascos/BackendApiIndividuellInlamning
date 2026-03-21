@@ -31,4 +31,9 @@ public class LoanController {
     public ResponseEntity<List<LoanResponse>> getAllLoans() {
         return ResponseEntity.ok(loanService.getAllLoans());
     }
+
+    @PatchMapping("/{id}/return")
+    public ResponseEntity<LoanResponse> returnLoanedBook(@PathVariable Long id){
+        return ResponseEntity.ok(loanService.returnLoanedBook(id));
+    }
 }
