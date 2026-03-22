@@ -69,4 +69,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
             }
 
+            @ExceptionHandler (InvalidReturnDateException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidReturnDate(
+            InvalidReturnDateException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                   400, "Bad Request", ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
 }

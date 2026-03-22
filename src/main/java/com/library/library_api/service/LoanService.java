@@ -3,10 +3,7 @@ package com.library.library_api.service;
 
 import com.library.library_api.dto.v1.LoanRequest;
 import com.library.library_api.dto.v1.LoanResponse;
-import com.library.library_api.exception.BookAlreadyLoanedOutException;
-import com.library.library_api.exception.BookAlreadyReturnedException;
-import com.library.library_api.exception.BookNotFoundException;
-import com.library.library_api.exception.LoanNotFoundException;
+import com.library.library_api.exception.*;
 import com.library.library_api.model.Book;
 import com.library.library_api.model.Loan;
 import com.library.library_api.repository.BookRepository;
@@ -59,11 +56,17 @@ public class LoanService {
                 .collect(Collectors.toList());
     }
 
-    public LoanResponse returnLoanedBook(Long loanId) {
+    public LoanResponse returnLoanedBook(Long loanId, LocalDate returnDate) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new LoanNotFoundException(loanId));
         if(loan.getReturnDate() != null) {
             throw new BookAlreadyReturnedException(loanId);
+        }
+
+        LocalDate chosenReturnDate = returnDate != null ? returnDate : LocalDate.now();
+
+        if(chosenReturnDate.isBefore(loan.getLoanDate())) {
+            throw new InvalidReturnDateException();
         }
         loan.setReturnDate(LocalDate.now());
         Loan savedLoan = loanRepository.save(loan);
