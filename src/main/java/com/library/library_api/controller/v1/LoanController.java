@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,9 @@ public class LoanController {
     }
 
     @PatchMapping("/{id}/return")
-    public ResponseEntity<LoanResponse> returnLoanedBook(@PathVariable Long id){
-        return ResponseEntity.ok(loanService.returnLoanedBook(id));
+    public ResponseEntity<LoanResponse> returnLoanedBook(@PathVariable Long id,
+                                                         @RequestBody(required = false) LoanRequest loanRequest){
+        LocalDate returnDate = loanRequest != null ? loanRequest.returnDate() : null;
+        return ResponseEntity.ok(loanService.returnLoanedBook(id, returnDate));
     }
 }
