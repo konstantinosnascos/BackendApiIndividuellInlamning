@@ -4,8 +4,12 @@ package com.library.library_api.service;
 import com.library.library_api.dto.v1.BookRequest;
 import com.library.library_api.dto.v1.BookResponse;
 import com.library.library_api.dto.v2.BookResponseV2;
+import com.library.library_api.exception.AuthorNotFoundException;
 import com.library.library_api.exception.BookAlreadyLoanedOutException;
+import com.library.library_api.exception.BookNotFoundException;
+import com.library.library_api.model.Author;
 import com.library.library_api.model.Book;
+import com.library.library_api.repository.AuthorRepository;
 import com.library.library_api.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +20,11 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
 
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, AuthorRepository authorRepository) {
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
     }
 
     public BookResponse createBook(BookRequest bookRequest) {
@@ -28,6 +34,13 @@ public class BookService {
                 bookRequest.isbn(),
                 bookRequest.publishedYear(),
                 true);
+
+        if (bookRequest.authorId() != null) {
+            Author author = authorRepository.findById(bookRequest.authorId())
+                    .orElseThrow(() -> new AuthorNotFoundException(bookRequest.authorId()));
+            book.setAuthorEntity(author);
+            book.setAuthor(author.getName());
+        }
 
         Book savedBook = bookRepository.save(book);
         return toResponse(savedBook);
@@ -50,7 +63,7 @@ public class BookService {
     }
 
     public BookResponse getBookById(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookAlreadyLoanedOutException(id));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
         return toResponse(book);
     }
 

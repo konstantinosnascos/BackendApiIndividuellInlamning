@@ -19,5 +19,6 @@ public record BookRequestV2(
         Integer publishedYear,
 
         @Schema(description = "Book availability", example = "true")
-        boolean available
+        boolean available,
+        Long authorId
 ) {}

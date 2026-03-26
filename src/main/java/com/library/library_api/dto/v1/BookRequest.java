@@ -14,5 +14,6 @@ public record BookRequest(
         String isbn,
 
         @Schema(description = "Year published", example = "2008")
-        Integer publishedYear
+        Integer publishedYear,
+        Long authorId
 ) {}

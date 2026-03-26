@@ -3,6 +3,10 @@ package com.library.library_api;
 
 import com.library.library_api.dto.v1.BookRequest;
 import com.library.library_api.dto.v1.BookResponse;
+import com.library.library_api.repository.AuthorRepository;
+import com.library.library_api.repository.BookRepository;
+import com.library.library_api.repository.LoanRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -14,8 +18,23 @@ import org.springframework.test.annotation.DirtiesContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BookIntegrationTest {
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    @Autowired
+    private AuthorRepository authorRepository;
+
+    @BeforeEach
+    void setUp() {
+        loanRepository.deleteAll();
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
+    }
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -26,7 +45,8 @@ public class BookIntegrationTest {
                 "Clean Code",
                 "Robert C. Martin",
                 "978-0132350884",
-                2008
+                2008,
+                null
         );
 
         ResponseEntity<BookResponse> response = restTemplate.postForEntity(
@@ -49,7 +69,8 @@ public class BookIntegrationTest {
                 "Clean Code",
                 "Robert C. Martin",
                 "978-0132350884",
-                2008
+                2008,
+                null
         );
         ResponseEntity<BookResponse> createResponse = restTemplate.postForEntity(
                 "/api/v1/books",

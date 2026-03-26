@@ -68,7 +68,7 @@ public class LoanService {
         if(chosenReturnDate.isBefore(loan.getLoanDate())) {
             throw new InvalidReturnDateException();
         }
-        loan.setReturnDate(LocalDate.now());
+        loan.setReturnDate(chosenReturnDate);
         Loan savedLoan = loanRepository.save(loan);
         return toResponse(savedLoan);
     }

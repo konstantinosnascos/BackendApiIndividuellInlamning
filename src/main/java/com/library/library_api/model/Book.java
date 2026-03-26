@@ -80,6 +80,14 @@ public class Book {
         return available;
     }
 
+    public Author getAuthorEntity() {
+        return authorEntity;
+    }
+
+    public void setAuthorEntity(Author authorEntity) {
+        this.authorEntity = authorEntity;
+    }
+
     public void setAvailable(boolean available) {
         this.available = available;
     }
