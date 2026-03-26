@@ -3,6 +3,8 @@ package com.library.library_api;
 
 import com.library.library_api.dto.v1.AuthorRequest;
 import com.library.library_api.dto.v1.AuthorResponse;
+import com.library.library_api.dto.v1.BookRequest;
+import com.library.library_api.dto.v1.BookResponse;
 import com.library.library_api.repository.AuthorRepository;
 import com.library.library_api.repository.BookRepository;
 import com.library.library_api.repository.LoanRepository;
@@ -20,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AuthorIntegrationTest {
 
     // POST /api/v1/authors -> 201 create author -klar
-    // POST /api/v1/authors -> 400 blank name
+    // POST /api/v1/authors -> 400 blank name -klar
 
     // GET /api/v1/authors/{id} -> 200 existing author -klar
     // GET /api/v1/authors/{id} -> 404 missing author -klar
 
-        // GET /api/v1/authors/{id}/books -> 200 empty list when author has no books
+    // GET /api/v1/authors/{id}/books -> 200 empty list when author has no books
     // GET /api/v1/authors/{id}/books -> 200 returns books for author
     // GET /api/v1/authors/{id}/books -> 404 missing author
 
@@ -110,5 +112,79 @@ public class AuthorIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().contains("Author with id 9999 not found"));
+    }
+
+    @Test
+    void createAuthor_shouldReturn400WhenNameIsBlank() {
+        AuthorRequest request = new AuthorRequest("");
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                "/api/v1/authors",
+                request,
+                String.class
+        );
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Author name is required"));
+    }
+
+    @Test
+    void getBooksByAuthorId_shouldReturnEmptyListWhenAuthorHasNoBooks() {
+        AuthorRequest request = new AuthorRequest("Martin Fowler");
+        ResponseEntity<AuthorResponse> createResponse = restTemplate.postForEntity(
+                "/api/v1/authors",
+                request,
+                AuthorResponse.class
+        );
+        Long authorId = createResponse.getBody().id();
+
+        ResponseEntity<Object[]> response = restTemplate.getForEntity(
+                "/api/v1/authors/" + authorId + "/books",
+                Object[].class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(0, response.getBody().length);
+    }
+
+    @Test
+    void getBooksByAuthorId_shouldReturnBooksForAuthor() {
+        AuthorRequest authorRequest = new AuthorRequest("Martin Fowler");
+
+        ResponseEntity<AuthorResponse> createAuthorResponse = restTemplate.postForEntity(
+                "/api/v1/authors",
+                authorRequest,
+                AuthorResponse.class
+        );
+
+        Long authorId = createAuthorResponse.getBody().id();
+
+        BookRequest bookRequest = new BookRequest(
+                "Refactoring",
+                "Martin Fowler",
+                "978-0201485677",
+                1999,
+                authorId
+        );
+
+        ResponseEntity<BookResponse> createBookResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                bookRequest,
+                BookResponse.class
+        );
+
+        assertEquals(HttpStatus.CREATED, createBookResponse.getStatusCode());
+        assertNotNull(createBookResponse.getBody());
+
+        ResponseEntity<BookResponse[]> response = restTemplate.getForEntity(
+                "/api/v1/authors/" + authorId + "/books",
+                BookResponse[].class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().length);
+        assertEquals("Refactoring", response.getBody()[0].title());
+        assertEquals("Martin Fowler", response.getBody()[0].author());
     }
 }
