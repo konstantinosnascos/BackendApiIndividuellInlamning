@@ -19,6 +19,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AuthorIntegrationTest {
 
+    // POST /api/v1/authors -> 201 create author -klar
+    // POST /api/v1/authors -> 400 blank name
+
+    // GET /api/v1/authors/{id} -> 200 existing author -klar
+    // GET /api/v1/authors/{id} -> 404 missing author -klar
+
+        // GET /api/v1/authors/{id}/books -> 200 empty list when author has no books
+    // GET /api/v1/authors/{id}/books -> 200 returns books for author
+    // GET /api/v1/authors/{id}/books -> 404 missing author
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -91,4 +101,14 @@ public class AuthorIntegrationTest {
         assertTrue(response.getBody().contains("Author with id 9999 not found"));
     }
 
+    @Test
+    void getBooksByAuthorId_shouldReturn404WhenAuthorDoesNotExist() {
+        ResponseEntity<String> response = restTemplate.getForEntity(
+                "/api/v1/authors/9999/books",
+                String.class
+        );
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Author with id 9999 not found"));
+    }
 }

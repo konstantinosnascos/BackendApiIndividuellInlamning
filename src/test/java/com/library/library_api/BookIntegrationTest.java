@@ -20,6 +20,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BookIntegrationTest {
 
+    // POST /api/v1/books -> 201 create book
+    // POST /api/v1/books -> 400 invalid input
+    // POST /api/v1/books -> 404 authorId does not exist
+
+    // GET /api/v1/books -> 200 list books
+    // GET /api/v1/books -> 200 empty list when no books exist
+    // GET /api/v1/books/{id} -> 200 existing book
+    // GET /api/v1/books/{id} -> 404 missing book
+
+
     @Autowired
     private LoanRepository loanRepository;
 

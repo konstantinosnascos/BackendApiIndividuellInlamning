@@ -1,0 +1,217 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Book</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.library.library_api.model</a>
+</div>
+
+<h1>Coverage Summary for Class: Book (com.library.library_api.model)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Book</td>
+<td class="coverageStat">
+  <span class="percent">
+    43.8%
+  </span>
+  <span class="absValue">
+    (7/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59.1%
+  </span>
+  <span class="absValue">
+    (13/22)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Book$HibernateInstantiator$2xZwRlnd</td>
+  </tr>
+  <tr>
+    <td class="name">Book$HibernateInstantiator$GBS27O9X</td>
+  </tr>
+  <tr>
+    <td class="name">Book$HibernateProxy$8jhlCVaj</td>
+  </tr>
+  <tr>
+    <td class="name">Book$HibernateProxy$wsaPwjLi</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    43.8%
+  </span>
+  <span class="absValue">
+    (7/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59.1%
+  </span>
+  <span class="absValue">
+    (13/22)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.library.library_api.model;
+&nbsp;
+&nbsp;import jakarta.persistence.*;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;books&quot;)
+&nbsp;public class Book {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long id;
+&nbsp;
+&nbsp;    @Column(nullable = false)
+&nbsp;    private String title;
+&nbsp;
+&nbsp;    @Column(nullable = false)
+&nbsp;    private String author;
+&nbsp;
+&nbsp;    private String isbn;
+&nbsp;
+&nbsp;    private Integer publishedYear;
+&nbsp;
+<b class="fc">&nbsp;    private boolean available = true;</b>
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;author_id&quot;)
+&nbsp;    private Author authorEntity;
+&nbsp;
+<b class="fc">&nbsp;    public Book() {}</b>
+&nbsp;
+<b class="fc">&nbsp;    public Book(String title, String author, String isbn, Integer publishedYear,  boolean available) {</b>
+<b class="fc">&nbsp;        this.title = title;</b>
+<b class="fc">&nbsp;        this.author = author;</b>
+<b class="fc">&nbsp;        this.isbn = isbn;</b>
+<b class="fc">&nbsp;        this.publishedYear = publishedYear;</b>
+<b class="fc">&nbsp;        this.available = available;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Long id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getTitle() {
+<b class="fc">&nbsp;        return title;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTitle(String title) {
+<b class="nc">&nbsp;        this.title = title;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getAuthor() {
+<b class="fc">&nbsp;        return author;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAuthor(String author) {
+<b class="nc">&nbsp;        this.author = author;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getIsbn() {
+<b class="fc">&nbsp;        return isbn;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setIsbn(String isbn) {
+<b class="nc">&nbsp;        this.isbn = isbn;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Integer getPublishedYear() {
+<b class="fc">&nbsp;        return publishedYear;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPublishedYear(Integer publishedYear) {
+<b class="nc">&nbsp;        this.publishedYear = publishedYear;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isAvailable() {
+<b class="nc">&nbsp;        return available;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Author getAuthorEntity() {
+<b class="nc">&nbsp;        return authorEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAuthorEntity(Author authorEntity) {
+<b class="nc">&nbsp;        this.authorEntity = authorEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAvailable(boolean available) {
+<b class="nc">&nbsp;        this.available = available;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-26 11:46</div>
+</div>
+</body>
+</html>
