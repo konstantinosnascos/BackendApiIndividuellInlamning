@@ -23,11 +23,11 @@ public class LoanIntegrationTest {
 
     // POST /api/v1/loans -> 201 create loan -klar
     // POST /api/v1/loans -> 400 missing bookId -klar
-    // POST /api/v1/loans -> 404 book does not exist
-    // POST /api/v1/loans -> 400 book already on loan
+    // POST /api/v1/loans -> 404 book does not exist -klar
+    // POST /api/v1/loans -> 400 book already on loan -klar
 
     // GET /api/v1/loans -> 200 list active loans
-    // GET /api/v1/loans -> 200 empty list when no active loans exist
+    // GET /api/v1/loans -> 200 empty list when no active loans exist -klar
 
     // PATCH /api/v1/loans/{id}/return -> 200 return active loan
     // PATCH /api/v1/loans/{id}/return -> 404 missing loan
@@ -89,7 +89,6 @@ public class LoanIntegrationTest {
         assertNull(response.getBody().returnDate());
     }
 
-    // POST /api/v1/loans -> 400 missing bookId
     @Test
     void createLoan_shouldReturn400WhenBookIdIsMissing() {
         LoanRequest loanRequest = new LoanRequest(null, null);
@@ -103,5 +102,71 @@ public class LoanIntegrationTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().contains("Book id is required"));
+    }
+
+    @Test
+    void createLoan_shouldReturn404WhenBookDoesNotExist() {
+        LoanRequest loanRequest = new LoanRequest(9999L, null);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                "/api/v1/loans",
+                loanRequest,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Book with id 9999 not found"));
+    }
+
+    @Test
+    void createLoan_shouldReturn400WhenBookIsAlreadyOnLoan() {
+        BookRequest bookRequest = new BookRequest(
+                "Clean Code",
+                "Robert C. Martin",
+                "978-0132350884",
+                2008,
+                null
+        );
+
+        ResponseEntity<BookResponse> createBookResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                bookRequest,
+                BookResponse.class
+        );
+
+        Long bookId = createBookResponse.getBody().id();
+
+        LoanRequest loanRequest = new LoanRequest(bookId, null);
+
+        ResponseEntity<LoanResponse> firstResponse = restTemplate.postForEntity(
+                "/api/v1/loans",
+                loanRequest,
+                LoanResponse.class
+        );
+
+        assertEquals(HttpStatus.CREATED, firstResponse.getStatusCode());
+
+        ResponseEntity<String> secondResponse = restTemplate.postForEntity(
+                "/api/v1/loans",
+                loanRequest,
+                String.class
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, secondResponse.getStatusCode());
+        assertNotNull(secondResponse.getBody());
+        assertTrue(secondResponse.getBody().contains("Book with id " + bookId + " is already on loan"));
+    }
+
+    @Test
+    void getAllLoans_shouldReturnEmptyListWhenNoActiveLoansExist() {
+        ResponseEntity<LoanResponse[]> response = restTemplate.getForEntity(
+                "/api/v1/loans",
+                LoanResponse[].class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(0, response.getBody().length);
     }
 }
