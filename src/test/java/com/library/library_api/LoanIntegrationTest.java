@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class LoanIntegrationTest {
 
-    // POST /api/v1/loans -> 201 create loan
-    // POST /api/v1/loans -> 400 missing bookId
+    // POST /api/v1/loans -> 201 create loan -klar
+    // POST /api/v1/loans -> 400 missing bookId -klar
     // POST /api/v1/loans -> 404 book does not exist
     // POST /api/v1/loans -> 400 book already on loan
 
@@ -89,4 +89,19 @@ public class LoanIntegrationTest {
         assertNull(response.getBody().returnDate());
     }
 
+    // POST /api/v1/loans -> 400 missing bookId
+    @Test
+    void createLoan_shouldReturn400WhenBookIdIsMissing() {
+        LoanRequest loanRequest = new LoanRequest(null, null);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                "/api/v1/loans",
+                loanRequest,
+                String.class
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Book id is required"));
+    }
 }
