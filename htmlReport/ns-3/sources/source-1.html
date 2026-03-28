@@ -52,18 +52,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    50%
+    100%
   </span>
   <span class="absValue">
-    (1/2)
+    (2/2)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    40%
+    100%
   </span>
   <span class="absValue">
-    (2/5)
+    (5/5)
   </span>
 </td>
 </tr>
@@ -100,10 +100,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successful retrieval of all books&quot;)
 &nbsp;    @GetMapping
 &nbsp;    public ResponseEntity&lt;VersionWrapper&lt;List&lt;BookResponseV2&gt;&gt;&gt; getAllBooksV2() {
-<b class="nc">&nbsp;        List&lt;BookResponseV2&gt; books = bookService.getAllBooksV2();</b>
-<b class="nc">&nbsp;        VersionWrapper&lt;List&lt;BookResponseV2&gt;&gt; response =</b>
+<b class="fc">&nbsp;        List&lt;BookResponseV2&gt; books = bookService.getAllBooksV2();</b>
+<b class="fc">&nbsp;        VersionWrapper&lt;List&lt;BookResponseV2&gt;&gt; response =</b>
 &nbsp;                new VersionWrapper&lt;&gt;(books, &quot;v2&quot;);
-<b class="nc">&nbsp;        return ResponseEntity.ok(response);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response);</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -129,7 +129,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-03-28 09:29</div>
+    <div style="float:right;">generated on 2026-03-28 09:47</div>
 </div>
 </body>
 </html>

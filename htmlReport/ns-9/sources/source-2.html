@@ -56,10 +56,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    57.1%
+    85.7%
   </span>
   <span class="absValue">
-    (4/7)
+    (6/7)
   </span>
 </td>
 <td class="coverageStat">
@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    60.5%
+    89.5%
   </span>
   <span class="absValue">
-    (23/38)
+    (34/38)
   </span>
 </td>
 </tr>
@@ -157,20 +157,20 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public List&lt;BookResponseV2&gt; getAllBooksV2() {
-<b class="nc">&nbsp;        return bookRepository.findAll()</b>
-<b class="nc">&nbsp;                .stream()</b>
-<b class="nc">&nbsp;                .map(this::toResponseV2)</b>
-<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        return bookRepository.findAll()</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(this::toResponseV2)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    private BookResponseV2 toResponseV2(Book book) {
-<b class="nc">&nbsp;        return new BookResponseV2(</b>
-<b class="nc">&nbsp;                book.getId(),</b>
-<b class="nc">&nbsp;                book.getTitle(),</b>
-<b class="nc">&nbsp;                book.getAuthor(),</b>
-<b class="nc">&nbsp;                book.getIsbn(),</b>
-<b class="nc">&nbsp;                book.getPublishedYear(),</b>
-<b class="nc">&nbsp;                book.isAvailable()</b>
+<b class="fc">&nbsp;        return new BookResponseV2(</b>
+<b class="fc">&nbsp;                book.getId(),</b>
+<b class="fc">&nbsp;                book.getTitle(),</b>
+<b class="fc">&nbsp;                book.getAuthor(),</b>
+<b class="fc">&nbsp;                book.getIsbn(),</b>
+<b class="fc">&nbsp;                book.getPublishedYear(),</b>
+<b class="fc">&nbsp;                book.isAvailable()</b>
 &nbsp;                );
 &nbsp;    }
 &nbsp;}
@@ -197,7 +197,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-03-28 09:29</div>
+    <div style="float:right;">generated on 2026-03-28 09:47</div>
 </div>
 </body>
 </html>

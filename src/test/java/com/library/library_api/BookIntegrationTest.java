@@ -100,4 +100,67 @@ public class BookIntegrationTest {
         assertEquals("Clean Code", response.getBody().title());
         assertEquals("Robert C. Martin", response.getBody().author());
     }
+
+    @Test
+    void getBookById_shouldReturn404WhenBookDoesNotExist() {
+        ResponseEntity<String> response = restTemplate.getForEntity(
+                "/api/v1/books/9999",
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Book with id 9999 not found"));
+    }
+
+    @Test
+    void createBook_shouldReturn400WhenTitleIsBlank() {
+        BookRequest request = new BookRequest(
+                "",
+                "Robert C. Martin",
+                "978-0132350884",
+                2008,
+                null
+        );
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                "/api/v1/books",
+                request,
+                String.class
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Title is required"));
+    }
+
+    @Test
+    void getAllBooksV2_shouldReturnWrappedBooksWithVersion() {
+        BookRequest request = new BookRequest(
+                "Clean Code",
+                "Robert C. Martin",
+                "978-0132350884",
+                2008,
+                null
+        );
+
+        ResponseEntity<BookResponse> createResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                request,
+                BookResponse.class
+        );
+
+        assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
+
+        ResponseEntity<String> response = restTemplate.getForEntity(
+                "/api/v2/books",
+                String.class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("\"version\":\"v2\""));
+        assertTrue(response.getBody().contains("Clean Code"));
+        assertTrue(response.getBody().contains("\"available\":true"));
+    }
 }
