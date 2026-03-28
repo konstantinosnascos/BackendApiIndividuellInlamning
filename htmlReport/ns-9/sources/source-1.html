@@ -52,18 +52,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    83.3%
+    100%
   </span>
   <span class="absValue">
-    (5/6)
+    (6/6)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    62.5%
+    100%
   </span>
   <span class="absValue">
-    (15/24)
+    (24/24)
   </span>
 </td>
 </tr>
@@ -121,16 +121,16 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        Author author = authorRepository.findById(id)</b>
 <b class="fc">&nbsp;                .orElseThrow(() -&gt; new AuthorNotFoundException(id));</b>
 &nbsp;
-<b class="nc">&nbsp;        return author.getBooks()</b>
-<b class="nc">&nbsp;                .stream()</b>
-<b class="nc">&nbsp;                .map(book -&gt; new BookResponse(</b>
-<b class="nc">&nbsp;                        book.getId(),</b>
-<b class="nc">&nbsp;                        book.getTitle(),</b>
-<b class="nc">&nbsp;                        book.getAuthor(),</b>
-<b class="nc">&nbsp;                        book.getIsbn(),</b>
-<b class="nc">&nbsp;                        book.getPublishedYear()</b>
+<b class="fc">&nbsp;        return author.getBooks()</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(book -&gt; new BookResponse(</b>
+<b class="fc">&nbsp;                        book.getId(),</b>
+<b class="fc">&nbsp;                        book.getTitle(),</b>
+<b class="fc">&nbsp;                        book.getAuthor(),</b>
+<b class="fc">&nbsp;                        book.getIsbn(),</b>
+<b class="fc">&nbsp;                        book.getPublishedYear()</b>
 &nbsp;                ))
-<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -156,7 +156,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-03-26 11:46</div>
+    <div style="float:right;">generated on 2026-03-28 09:29</div>
 </div>
 </body>
 </html>

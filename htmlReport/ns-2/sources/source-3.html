@@ -56,10 +56,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    25%
+    75%
   </span>
   <span class="absValue">
-    (1/4)
+    (3/4)
   </span>
 </td>
 <td class="coverageStat">
@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    28.6%
+    71.4%
   </span>
   <span class="absValue">
-    (2/7)
+    (5/7)
   </span>
 </td>
 </tr>
@@ -113,13 +113,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    public ResponseEntity&lt;LoanResponse&gt; createLoan(
 &nbsp;            @Valid
 &nbsp;            @RequestBody LoanRequest loanRequest) {
-<b class="nc">&nbsp;        LoanResponse loanResponse = loanService.createLoan(loanRequest);</b>
-<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(loanResponse);</b>
+<b class="fc">&nbsp;        LoanResponse loanResponse = loanService.createLoan(loanRequest);</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(loanResponse);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @GetMapping
 &nbsp;    public ResponseEntity&lt;List&lt;LoanResponse&gt;&gt; getAllLoans() {
-<b class="nc">&nbsp;        return ResponseEntity.ok(loanService.getAllLoans());</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(loanService.getAllLoans());</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @PatchMapping(&quot;/{id}/return&quot;)
@@ -152,7 +152,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-03-26 11:46</div>
+    <div style="float:right;">generated on 2026-03-28 09:29</div>
 </div>
 </body>
 </html>

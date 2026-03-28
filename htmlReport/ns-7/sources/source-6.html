@@ -52,18 +52,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    25%
+    62.5%
   </span>
   <span class="absValue">
-    (2/8)
+    (5/8)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    19.2%
+    65.4%
   </span>
   <span class="absValue">
-    (5/26)
+    (17/26)
   </span>
 </td>
 </tr>
@@ -93,8 +93,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    public ResponseEntity&lt;ErrorResponse&gt; handleBookNotFound(
 &nbsp;            BookNotFoundException ex, HttpServletRequest request) {
 &nbsp;
-<b class="nc">&nbsp;        ErrorResponse errorResponse = new ErrorResponse(404, &quot;Not Found&quot;, ex.getMessage(), request.getRequestURI());</b>
-<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);</b>
+<b class="fc">&nbsp;        ErrorResponse errorResponse = new ErrorResponse(404, &quot;Not Found&quot;, ex.getMessage(), request.getRequestURI());</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @ExceptionHandler(AuthorNotFoundException.class)
@@ -111,23 +111,23 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    @ExceptionHandler(MethodArgumentNotValidException.class)
 &nbsp;    public ResponseEntity&lt;ErrorResponse&gt; handleValidationErrors(
 &nbsp;            MethodArgumentNotValidException ex, HttpServletRequest request) {
-<b class="nc">&nbsp;        String message = ex.getBindingResult().getFieldErrors()</b>
-<b class="nc">&nbsp;                .stream()</b>
-<b class="nc">&nbsp;                .map(fieldError -&gt; fieldError.getField() + &quot;: &quot; + fieldError.getDefaultMessage())</b>
-<b class="nc">&nbsp;                .collect(Collectors.joining(&quot;, &quot;));</b>
+<b class="fc">&nbsp;        String message = ex.getBindingResult().getFieldErrors()</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(fieldError -&gt; fieldError.getField() + &quot;: &quot; + fieldError.getDefaultMessage())</b>
+<b class="fc">&nbsp;                .collect(Collectors.joining(&quot;, &quot;));</b>
 &nbsp;
-<b class="nc">&nbsp;        ErrorResponse errorResponse = new ErrorResponse(</b>
-<b class="nc">&nbsp;                400, &quot;Bad Request&quot;, message, request.getRequestURI()</b>
+<b class="fc">&nbsp;        ErrorResponse errorResponse = new ErrorResponse(</b>
+<b class="fc">&nbsp;                400, &quot;Bad Request&quot;, message, request.getRequestURI()</b>
 &nbsp;        );
-<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @ExceptionHandler (BookAlreadyLoanedOutException.class)
 &nbsp;    public ResponseEntity&lt;ErrorResponse&gt; handleBookAlreadyLoanedOut(
 &nbsp;            BookAlreadyLoanedOutException ex, HttpServletRequest request) {
-<b class="nc">&nbsp;        ErrorResponse errorResponse = new ErrorResponse(</b>
-<b class="nc">&nbsp;                400, &quot;Bad Request&quot;, ex.getMessage(), request.getRequestURI());</b>
-<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);</b>
+<b class="fc">&nbsp;        ErrorResponse errorResponse = new ErrorResponse(</b>
+<b class="fc">&nbsp;                400, &quot;Bad Request&quot;, ex.getMessage(), request.getRequestURI());</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);</b>
 &nbsp;            }
 &nbsp;
 &nbsp;            @ExceptionHandler (BookAlreadyReturnedException.class)
@@ -178,7 +178,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-03-26 11:46</div>
+    <div style="float:right;">generated on 2026-03-28 09:29</div>
 </div>
 </body>
 </html>

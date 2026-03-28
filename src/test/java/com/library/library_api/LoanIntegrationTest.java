@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -26,7 +28,7 @@ public class LoanIntegrationTest {
     // POST /api/v1/loans -> 404 book does not exist -klar
     // POST /api/v1/loans -> 400 book already on loan -klar
 
-    // GET /api/v1/loans -> 200 list active loans
+    // GET /api/v1/loans -> 200 list active loans -klar
     // GET /api/v1/loans -> 200 empty list when no active loans exist -klar
 
     // PATCH /api/v1/loans/{id}/return -> 200 return active loan
@@ -169,4 +171,90 @@ public class LoanIntegrationTest {
         assertNotNull(response.getBody());
         assertEquals(0, response.getBody().length);
     }
+
+    @Test
+    void getAllLoans_shouldReturnActiveLoans() {
+        BookRequest bookRequest = new BookRequest(
+                "Clean Code",
+                "Robert C. Martin",
+                "978-0132350884",
+                 2008,
+                null
+        );
+
+        ResponseEntity<BookResponse> createBookResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                bookRequest,
+                BookResponse.class
+        );
+
+        Long bookId = createBookResponse.getBody().id();
+
+        LoanRequest loanRequest = new LoanRequest(bookId, null);
+
+        ResponseEntity<LoanResponse> firstResponse = restTemplate.postForEntity(
+                "/api/v1/loans",
+                loanRequest,
+                LoanResponse.class
+        );
+
+        assertEquals(HttpStatus.CREATED, firstResponse.getStatusCode());
+
+
+        ResponseEntity<LoanResponse[]> response = restTemplate.getForEntity(
+                "/api/v1/loans",
+                LoanResponse[].class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().length);
+        assertEquals(bookId, response.getBody()[0].bookId());
+        assertEquals("Clean Code", response.getBody()[0].bookTitle());
+        assertNull(response.getBody()[0].returnDate());
+    }
+
+//    @Test
+//    void returnLoanedBook_shouldReturn200AndSetReturnDate() {
+//        BookRequest bookRequest = new BookRequest(
+//                "Clean Code",
+//                "Robert C. Martin",
+//                "978-0132350884",
+//                2008,
+//                null
+//        );
+//
+//        ResponseEntity<BookResponse> createBookResponse = restTemplate.postForEntity(
+//                "/api/v1/books",
+//                bookRequest,
+//                BookResponse.class
+//        );
+//
+//        Long bookId = createBookResponse.getBody().id();
+//
+//        LoanRequest loanRequest = new LoanRequest(bookId, null);
+//
+//        ResponseEntity<LoanResponse> createLoanResponse = restTemplate.postForEntity(
+//                "/api/v1/loans",
+//                loanRequest,
+//                LoanResponse.class
+//        );
+//
+//        Long loanId = createLoanResponse.getBody().id();
+//
+//        HttpEntity<Void> requestEntity = new HttpEntity<>(null);
+//
+//        ResponseEntity<LoanResponse> response = restTemplate.exchange(
+//                "/api/v1/loans/" + loanId + "/return",
+//                HttpMethod.PATCH,
+//                requestEntity,
+//                LoanResponse.class
+//        );
+//
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertNotNull(response.getBody());
+//        assertEquals(loanId, response.getBody().id());
+//        assertEquals(bookId, response.getBody().bookId());
+//        assertNotNull(response.getBody().returnDate());
+//    }
 }

@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > AuthorRepository</title>
+  <title>Coverage Report > LoanRepository</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,14 +22,14 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">com.library.library_api.repository</a>
 </div>
 
-<h1>Coverage Summary for Class: AuthorRepository (com.library.library_api.repository)</h1>
+<h1>Coverage Summary for Class: LoanRepository (com.library.library_api.repository)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
 </tr>
 <tr>
-  <td class="name">AuthorRepository</td>
+  <td class="name">LoanRepository</td>
 </tr>
 
 </table>
@@ -41,13 +41,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package com.library.library_api.repository;
 &nbsp;
-&nbsp;import com.library.library_api.model.Author;
 &nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import com.library.library_api.model.Loan;
 &nbsp;import org.springframework.stereotype.Repository;
 &nbsp;
+&nbsp;import java.util.Optional;
 &nbsp;
 &nbsp;@Repository
-&nbsp;public interface AuthorRepository extends JpaRepository&lt;Author,Long&gt; {
+&nbsp;public interface LoanRepository extends JpaRepository&lt;Loan, Long&gt; {
+&nbsp;    Optional&lt;Loan&gt; findByBookIdAndReturnDateIsNull(Long bookId);
 &nbsp;}
 </code>
 </pre>
@@ -72,7 +74,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-03-26 11:46</div>
+    <div style="float:right;">generated on 2026-03-28 09:29</div>
 </div>
 </body>
 </html>
