@@ -288,6 +288,23 @@ public class LoanIntegrationTest {
         responses.forEach(response ->
                 System.out.println("Response status: " + response.getStatusCode() + ", body: " + response.getBody())
         );
+
+        assertEquals(1, loanCount);
+
+        long createdCount = responses.stream()
+                .filter(response -> response.getStatusCode() == HttpStatus.CREATED)
+                .count();
+
+        long badRequestCount = responses.stream()
+                .filter(response -> response.getStatusCode() == HttpStatus.BAD_REQUEST)
+                .count();
+
+        assertEquals(1, createdCount);
+        assertEquals(1, badRequestCount);
+
+        assertTrue(responses.stream().anyMatch(response ->
+                response.getBody() != null &&
+                        response.getBody().contains("already on loan")));
     }
 
 //    @Test
