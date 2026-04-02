@@ -11,6 +11,7 @@ import com.library.library_api.repository.LoanRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,11 +41,13 @@ public class LoanService {
                 });
 
         applyArtificialDelayIfConfigured();
-
-        Loan loan = new Loan(book);
-        Loan savedLoan = loanRepository.save(loan);
-        return toResponse(savedLoan);
-
+        try {
+            Loan loan = new Loan(book);
+            Loan savedLoan = loanRepository.save(loan);
+            return toResponse(savedLoan);
+        } catch (DataIntegrityViolationException e) {
+            throw new BookAlreadyLoanedOutException(loanRequest.bookId());
+        }
     }
 
     private LoanResponse toResponse(Loan loan) {
