@@ -10,6 +10,7 @@ import com.library.library_api.repository.BookRepository;
 import com.library.library_api.repository.LoanRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +29,7 @@ public class LoanService {
         this.bookRepository = bookRepository;
     }
 
+    @Transactional
     public LoanResponse createLoan(LoanRequest loanRequest) {
         Book book = bookRepository.findById(
                 loanRequest.bookId())
