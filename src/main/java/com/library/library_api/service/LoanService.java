@@ -32,7 +32,7 @@ public class LoanService {
 
     @Transactional
     public LoanResponse createLoan(LoanRequest loanRequest) {
-        Book book = bookRepository.findById(
+        Book book = bookRepository.findByIdForUpdate(
                 loanRequest.bookId())
                 .orElseThrow(() -> new BookNotFoundException(loanRequest.bookId()));
         loanRepository.findByBookIdAndReturnDateIsNull(loanRequest.bookId())
