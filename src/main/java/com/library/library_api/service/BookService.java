@@ -11,6 +11,8 @@ import com.library.library_api.model.Author;
 import com.library.library_api.model.Book;
 import com.library.library_api.repository.AuthorRepository;
 import com.library.library_api.repository.BookRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +29,7 @@ public class BookService {
         this.authorRepository = authorRepository;
     }
 
+    @CacheEvict(value = {"books", "booksV2"}, allEntries = true)
     public BookResponse createBook(BookRequest bookRequest) {
         Book book = new Book(
                 bookRequest.title(),
@@ -46,6 +49,7 @@ public class BookService {
         return toResponse(savedBook);
     }
 
+    @Cacheable("books")
     public List<BookResponse> getAllBooks() {
         return bookRepository.findAll()
                 .stream()
@@ -62,11 +66,13 @@ public class BookService {
                 book.getPublishedYear());
     }
 
+    @Cacheable(value = "book", key = "#id")
     public BookResponse getBookById(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
         return toResponse(book);
     }
 
+    @Cacheable("booksV2")
     public List<BookResponseV2> getAllBooksV2() {
         return bookRepository.findAll()
                 .stream()

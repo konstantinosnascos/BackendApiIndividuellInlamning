@@ -68,6 +68,7 @@ public class LoanService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public LoanResponse returnLoanedBook(Long loanId, LocalDate returnDate) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new LoanNotFoundException(loanId));

@@ -7,6 +7,7 @@ import com.library.library_api.exception.AuthorNotFoundException;
 import com.library.library_api.model.Author;
 import com.library.library_api.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class AuthorService {
         this.authorRepository = authorRepository;
     }
 
+    @Transactional
     public AuthorResponse createAuthor(AuthorRequest request) {
         Author author = new Author(request.name());
         Author savedAuthor = authorRepository.save(author);
