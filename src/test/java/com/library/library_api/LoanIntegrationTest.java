@@ -17,10 +17,18 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = "loan.create.delay-ms=200")
 public class LoanIntegrationTest {
 
     // POST /api/v1/loans -> 201 create loan -klar
@@ -212,6 +220,74 @@ public class LoanIntegrationTest {
         assertEquals(bookId, response.getBody()[0].bookId());
         assertEquals("Clean Code", response.getBody()[0].bookTitle());
         assertNull(response.getBody()[0].returnDate());
+    }
+
+    @Test
+    void createLoan_shouldDemonstrateRaceConditionWhenTwoRequestsRunConcurrently() throws Exception {
+        BookRequest bookRequest = new BookRequest(
+                "Clean Code",
+                "Robert C. Martin",
+                "978-0132350884",
+                2008,
+                null
+        );
+
+        ResponseEntity<BookResponse> createBookResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                bookRequest,
+                BookResponse.class
+        );
+
+        assertEquals(HttpStatus.CREATED, createBookResponse.getStatusCode());
+        assertNotNull(createBookResponse.getBody());
+
+        Long bookId = createBookResponse.getBody().id();
+        LoanRequest loanRequest = new LoanRequest(bookId, null);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        CountDownLatch readyLatch = new CountDownLatch(2);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(2);
+
+        List<ResponseEntity<String>> responses = new CopyOnWriteArrayList<>();
+        List<Exception> exceptions = new CopyOnWriteArrayList<>();
+
+        Runnable task = () -> {
+            try {
+                readyLatch.countDown();
+                startLatch.await();
+
+                ResponseEntity<String> response = restTemplate.postForEntity(
+                        "/api/v1/loans",
+                        loanRequest,
+                        String.class
+                );
+
+                responses.add(response);
+            } catch (Exception e) {
+                exceptions.add(e);
+            } finally {
+                doneLatch.countDown();
+            }
+        };
+
+        executorService.submit(task);
+        executorService.submit(task);
+
+        readyLatch.await();
+        startLatch.countDown();
+        doneLatch.await();
+        executorService.shutdown();
+
+        assertEquals(2, responses.size());
+        assertTrue(exceptions.isEmpty());
+
+        long loanCount = loanRepository.count();
+
+        System.out.println("Number of loans created: " + loanCount);
+        responses.forEach(response ->
+                System.out.println("Response status: " + response.getStatusCode() + ", body: " + response.getBody())
+        );
     }
 
 //    @Test

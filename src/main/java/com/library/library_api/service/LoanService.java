@@ -9,6 +9,7 @@ import com.library.library_api.model.Loan;
 import com.library.library_api.repository.BookRepository;
 import com.library.library_api.repository.LoanRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 public class LoanService {
     private final LoanRepository loanRepository;
     private final BookRepository bookRepository;
+
+    @Value("${loan.create.delay-ms:0}")
+    private long createLoanDelayMs;
 
     public LoanService(LoanRepository loanRepository, BookRepository bookRepository) {
         this.loanRepository = loanRepository;
@@ -32,6 +36,9 @@ public class LoanService {
                 .ifPresent(loan -> {
                     throw new BookAlreadyLoanedOutException(loanRequest.bookId());
                 });
+
+        applyArtificialDelayIfConfigured();
+
         Loan loan = new Loan(book);
         Loan savedLoan = loanRepository.save(loan);
         return toResponse(savedLoan);
@@ -71,5 +78,16 @@ public class LoanService {
         loan.setReturnDate(chosenReturnDate);
         Loan savedLoan = loanRepository.save(loan);
         return toResponse(savedLoan);
+    }
+
+    private void applyArtificialDelayIfConfigured() {
+        if (createLoanDelayMs > 0) {
+            try {
+                Thread.sleep(createLoanDelayMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Thread was interrupted", e);
+            }
+        }
     }
 }
