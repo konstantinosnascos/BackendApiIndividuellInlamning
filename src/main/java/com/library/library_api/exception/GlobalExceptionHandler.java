@@ -100,4 +100,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
             }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(
+            Exception ex, HttpServletRequest request) {
+
+        logger.error("Unexpected error at path={}", request.getRequestURI(), ex); // Logga som ERROR med hela stacktracen
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                500,
+                "Internal Server Error",
+                "An unexpected error occurred", // Generellt meddelande till klienten
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
 }
