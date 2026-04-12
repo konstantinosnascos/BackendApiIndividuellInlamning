@@ -389,6 +389,86 @@ public class LoanIntegrationTest {
                         response.getBody().contains("already on loan")));
     }
 
+
+    @Test
+    void createLoan_shouldHandle100ConcurrentRequestsForDifferentBooks() throws Exception {
+        int requestCount = 100;
+        List<Long> bookIds = new CopyOnWriteArrayList<>();
+
+        for (int i = 0; i < requestCount; i++) {
+            BookRequest bookRequest = new BookRequest(
+                    "Clean Code " + i,
+                    "Robert C. Martin",
+                    "978-0132350884-" + i,
+                    2008,
+                    null
+            );
+
+            ResponseEntity<BookResponse> createBookResponse = restTemplate.postForEntity(
+                    "/api/v1/books",
+                    bookRequest,
+                    BookResponse.class
+            );
+
+            assertEquals(HttpStatus.CREATED, createBookResponse.getStatusCode());
+            assertNotNull(createBookResponse.getBody());
+            bookIds.add(createBookResponse.getBody().id());
+        }
+
+        ExecutorService executorService = Executors.newFixedThreadPool(requestCount);
+        CountDownLatch readyLatch = new CountDownLatch(requestCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(requestCount);
+
+        List<ResponseEntity<String>> responses = new CopyOnWriteArrayList<>();
+        List<Exception> exceptions = new CopyOnWriteArrayList<>();
+
+        for (Long bookId : bookIds) {
+            executorService.submit(() -> {
+                try {
+                    readyLatch.countDown();
+                    startLatch.await();
+
+                    LoanRequest loanRequest = new LoanRequest(bookId, null);
+
+                    ResponseEntity<String> response = restTemplate.postForEntity(
+                            "/api/v1/loans",
+                            loanRequest,
+                            String.class
+                    );
+
+                    responses.add(response);
+                } catch (Exception e) {
+                    exceptions.add(e);
+                } finally {
+                    doneLatch.countDown();
+                }
+            });
+        }
+
+        readyLatch.await();
+        startLatch.countDown();
+        doneLatch.await();
+        executorService.shutdown();
+
+        assertEquals(requestCount, responses.size());
+        assertTrue(exceptions.isEmpty());
+
+        long loanCount = loanRepository.count();
+        assertEquals(requestCount, loanCount);
+
+        long createdCount = responses.stream()
+                .filter(response -> response.getStatusCode() == HttpStatus.CREATED)
+                .count();
+
+        long badRequestCount = responses.stream()
+                .filter(response -> response.getStatusCode() == HttpStatus.BAD_REQUEST)
+                .count();
+
+        assertEquals(requestCount, createdCount);
+        assertEquals(0, badRequestCount);
+    }
+
 //    @Test
 //    void returnLoanedBook_shouldReturn200AndSetReturnDate() {
 //        BookRequest bookRequest = new BookRequest(
