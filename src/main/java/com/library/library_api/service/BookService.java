@@ -11,6 +11,7 @@ import com.library.library_api.model.Author;
 import com.library.library_api.model.Book;
 import com.library.library_api.repository.AuthorRepository;
 import com.library.library_api.repository.BookRepository;
+import com.library.library_api.repository.LoanRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -23,10 +24,12 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
+    private final LoanRepository loanRepository;
 
-    public BookService(BookRepository bookRepository, AuthorRepository authorRepository) {
+    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, LoanRepository loanRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
+        this.loanRepository = loanRepository;
     }
 
     @CacheEvict(value = {"books", "booksV2"}, allEntries = true)
@@ -81,13 +84,15 @@ public class BookService {
     }
 
     private BookResponseV2 toResponseV2(Book book) {
+
+        boolean available = loanRepository.findByBookIdAndReturnDateIsNull(book.getId()).isEmpty();
         return new BookResponseV2(
                 book.getId(),
                 book.getTitle(),
                 book.getAuthor(),
                 book.getIsbn(),
                 book.getPublishedYear(),
-                book.isAvailable()
+                available
                 );
     }
 }
