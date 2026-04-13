@@ -8,6 +8,7 @@ import com.library.library_api.model.Book;
 import com.library.library_api.model.Loan;
 import com.library.library_api.repository.BookRepository;
 import com.library.library_api.repository.LoanRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class LoanService {
     }
 
     @Transactional
+    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public LoanResponse createLoan(LoanRequest loanRequest) {
         Book book = bookRepository.findByIdForUpdate(
                 loanRequest.bookId())
@@ -69,6 +71,7 @@ public class LoanService {
     }
 
     @Transactional
+    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public LoanResponse returnLoanedBook(Long loanId, LocalDate returnDate) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new LoanNotFoundException(loanId));
