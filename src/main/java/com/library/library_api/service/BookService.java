@@ -32,7 +32,7 @@ public class BookService {
         this.loanRepository = loanRepository;
     }
 
-    @CacheEvict(value = {"books", "booksV2"}, allEntries = true)
+    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public BookResponse createBook(BookRequest bookRequest) {
         Book book = new Book(
                 bookRequest.title(),
