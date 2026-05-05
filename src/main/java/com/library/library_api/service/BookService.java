@@ -34,19 +34,15 @@ public class BookService {
 
     @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public BookResponse createBook(BookRequest bookRequest) {
+        Author author = resolveAuthor(bookRequest);
+
         Book book = new Book(
                 bookRequest.title(),
-                bookRequest.author(),
+                author,
                 bookRequest.isbn(),
                 bookRequest.publishedYear(),
-                true);
-
-        if (bookRequest.authorId() != null) {
-            Author author = authorRepository.findById(bookRequest.authorId())
-                    .orElseThrow(() -> new AuthorNotFoundException(bookRequest.authorId()));
-            book.setAuthorEntity(author);
-            book.setAuthor(author.getName());
-        }
+                true
+        );
 
         Book savedBook = bookRepository.save(book);
         return toResponse(savedBook);
@@ -64,7 +60,7 @@ public class BookService {
         return new BookResponse(
                 book.getId(),
                 book.getTitle(),
-                book.getAuthor(),
+                book.getAuthor().getName(),
                 book.getIsbn(),
                 book.getPublishedYear());
     }
@@ -89,7 +85,7 @@ public class BookService {
         return new BookResponseV2(
                 book.getId(),
                 book.getTitle(),
-                book.getAuthor(),
+                book.getAuthor().getName(),
                 book.getIsbn(),
                 book.getPublishedYear(),
                 available
@@ -98,20 +94,16 @@ public class BookService {
 
     @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public BookResponse updateBook(Long id, BookRequest bookRequest) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
+
+        Author author = resolveAuthor(bookRequest);
+
         book.setTitle(bookRequest.title());
-        book.setAuthor(bookRequest.author());
+        book.setAuthor(author);
         book.setIsbn(bookRequest.isbn());
         book.setPublishedYear(bookRequest.publishedYear());
 
-        if(bookRequest.authorId() != null) {
-            Author author = authorRepository.findById(bookRequest.authorId())
-                    .orElseThrow(() -> new AuthorNotFoundException(bookRequest.authorId()));
-            book.setAuthorEntity(author);
-            book.setAuthor(author.getName());
-        } else {
-            book.setAuthorEntity(null);
-        }
         Book savedBook = bookRepository.save(book);
         return toResponse(savedBook);
     }
@@ -127,5 +119,19 @@ public class BookService {
                 });
 
         bookRepository.delete(book);
+    }
+
+    private Author resolveAuthor(BookRequest bookRequest) {
+        if (bookRequest.authorId() != null) {
+            return authorRepository.findById(bookRequest.authorId())
+                    .orElseThrow(() -> new AuthorNotFoundException(bookRequest.authorId()));
+        }
+
+        if (bookRequest.author() == null || bookRequest.author().isBlank()) {
+            throw new IllegalArgumentException("Author or authorId is required");
+        }
+
+        return authorRepository.findByNameIgnoreCase(bookRequest.author())
+                .orElseGet(() -> authorRepository.save(new Author(bookRequest.author())));
     }
 }

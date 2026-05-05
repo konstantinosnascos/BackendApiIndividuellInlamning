@@ -37,4 +37,22 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getBooksByAuthorId(id));
     }
 
+    @GetMapping
+    public ResponseEntity<List<AuthorResponse>> getAllAuthors() {
+        return ResponseEntity.ok(authorService.getAllAuthors());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AuthorResponse> updateAuthor(
+            @PathVariable Long id,
+            @Valid @RequestBody AuthorRequest authorRequest) {
+
+        return ResponseEntity.ok(authorService.updateAuthor(id, authorRequest));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
+        authorService.deleteAuthor(id);
+        return ResponseEntity.noContent().build();
+    }
 }

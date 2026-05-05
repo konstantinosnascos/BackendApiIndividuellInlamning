@@ -13,22 +13,19 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private String author;
-
     private String isbn;
 
     private Integer publishedYear;
 
     private boolean available = true;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private Author authorEntity;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
+    private Author author;
 
     public Book() {}
 
-    public Book(String title, String author, String isbn, Integer publishedYear,  boolean available) {
+    public Book(String title, Author author, String isbn, Integer publishedYear,  boolean available) {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
@@ -52,11 +49,11 @@ public class Book {
         this.title = title;
     }
 
-    public String getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
@@ -78,14 +75,6 @@ public class Book {
 
     public boolean isAvailable() {
         return available;
-    }
-
-    public Author getAuthorEntity() {
-        return authorEntity;
-    }
-
-    public void setAuthorEntity(Author authorEntity) {
-        this.authorEntity = authorEntity;
     }
 
     public void setAvailable(boolean available) {
