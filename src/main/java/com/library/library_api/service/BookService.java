@@ -95,4 +95,37 @@ public class BookService {
                 available
                 );
     }
+
+    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
+    public BookResponse updateBook(Long id, BookRequest bookRequest) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+        book.setTitle(bookRequest.title());
+        book.setAuthor(bookRequest.author());
+        book.setIsbn(bookRequest.isbn());
+        book.setPublishedYear(bookRequest.publishedYear());
+
+        if(bookRequest.authorId() != null) {
+            Author author = authorRepository.findById(bookRequest.authorId())
+                    .orElseThrow(() -> new AuthorNotFoundException(bookRequest.authorId()));
+            book.setAuthorEntity(author);
+            book.setAuthor(author.getName());
+        } else {
+            book.setAuthorEntity(null);
+        }
+        Book savedBook = bookRepository.save(book);
+        return toResponse(savedBook);
+    }
+
+    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
+    public void deleteBook(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
+
+        loanRepository.findByBookIdAndReturnDateIsNull(id)
+                .ifPresent(loan -> {
+                    throw new BookAlreadyLoanedOutException(id);
+                });
+
+        bookRepository.delete(book);
+    }
 }

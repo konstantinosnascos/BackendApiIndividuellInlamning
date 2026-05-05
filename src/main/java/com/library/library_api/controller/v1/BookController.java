@@ -52,4 +52,29 @@ public class BookController {
             @PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
+
+    @Operation(summary = "Update book by ID", description = "Updates an existing book and returns the updated book")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Book updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Book not found")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<BookResponse> updateBook(
+            @PathVariable Long id,
+            @Valid
+            @RequestBody BookRequest bookRequest) {
+        return ResponseEntity.ok(bookService.updateBook(id, bookRequest));
+    }
+
+    @Operation(summary = "Delete book by ID", description = "Deletes an existing book")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Book deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Book not found")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
+    }
 }
