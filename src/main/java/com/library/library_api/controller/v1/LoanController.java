@@ -39,4 +39,17 @@ public class LoanController {
         LocalDate returnDate = loanRequest != null ? loanRequest.returnDate() : null;
         return ResponseEntity.ok(loanService.returnLoanedBook(id, returnDate));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<LoanResponse> getLoanById(@PathVariable Long id) {
+        return ResponseEntity.ok(loanService.getLoanById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
+        loanService.deleteLoan(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

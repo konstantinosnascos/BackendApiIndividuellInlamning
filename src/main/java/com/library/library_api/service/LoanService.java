@@ -99,4 +99,22 @@ public class LoanService {
             }
         }
     }
+
+    public LoanResponse getLoanById(Long id) {
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new LoanNotFoundException(id));
+
+        return toResponse(loan);
+    }
+
+    @Transactional
+    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
+    public void deleteLoan(Long id) {
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new LoanNotFoundException(id));
+
+        loanRepository.delete(loan);
+    }
+
+
 }
