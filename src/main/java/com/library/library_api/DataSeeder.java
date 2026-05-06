@@ -8,6 +8,7 @@ import com.library.library_api.repository.BookRepository;
 import com.library.library_api.repository.LoanRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -25,22 +26,18 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) {
 
-        Author martin = new Author("Robert C. Martin");
-        Author fowler = new Author("Martin Fowler");
-        Author thomas = new Author("David Thomas");
+        Author martin = authorRepository.save(new Author("Robert C. Martin"));
+        Author fowler = authorRepository.save(new Author("Martin Fowler"));
+        Author thomas = authorRepository.save(new Author("David Thomas"));
 
-        Book cleanCode = new Book("Clean Code", martin, "978-0132350884", 2008, true);
-        Book cleanArch = new Book("Clean Architecture", martin, "978-0134494166", 2017, true);
-        Book refactoring = new Book("Refactoring", fowler, "978-0201485677", 1999, true);
-        Book patterns = new Book("Patterns of Enterprise Application Architecture", fowler, "978-0321127426", 2002, true);
-        Book pragmatic = new Book("The Pragmatic Programmer", thomas, "978-0135957059", 2019, true);
-        bookRepository.save(cleanCode);
-        bookRepository.save(cleanArch);
-        bookRepository.save(refactoring);
-        bookRepository.save(patterns);
-        bookRepository.save(pragmatic);
+        Book cleanCode = bookRepository.save(new Book("Clean Code", martin, "978-0132350884", 2008, true));
+        Book cleanArch = bookRepository.save(new Book("Clean Architecture", martin, "978-0134494166", 2017, true));
+        Book refactoring = bookRepository.save(new Book("Refactoring", fowler, "978-0201485677", 1999, true));
+        Book patterns = bookRepository.save(new Book("Patterns of Enterprise Application Architecture", fowler, "978-0321127426", 2002, true));
+        Book pragmatic = bookRepository.save(new Book("The Pragmatic Programmer", thomas, "978-0135957059", 2019, true));
 
         loanRepository.save(new Loan(cleanCode));
         loanRepository.save(new Loan(refactoring));
