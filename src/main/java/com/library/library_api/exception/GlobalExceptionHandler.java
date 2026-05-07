@@ -63,8 +63,8 @@ public class GlobalExceptionHandler {
         logger.warn("Loan rejected: {}, path={}", ex.getMessage(), request.getRequestURI());
 
         ErrorResponse errorResponse = new ErrorResponse(
-                400, "Bad Request", ex.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+                409, "Conflict", ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
             }
 
             @ExceptionHandler (BookAlreadyReturnedException.class)
@@ -74,8 +74,8 @@ public class GlobalExceptionHandler {
                 logger.warn("Return rejected: {}, path={}", ex.getMessage(), request.getRequestURI());
 
         ErrorResponse errorResponse = new ErrorResponse(
-                 400, "Bad Request", ex.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+                 409, "Conflict", ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
             }
 
             @ExceptionHandler (LoanNotFoundException.class)

@@ -130,7 +130,7 @@ public class LoanIntegrationTest {
     }
 
     @Test
-    void createLoan_shouldReturn400WhenBookIsAlreadyOnLoan() {
+    void createLoan_shouldReturn409WhenBookIsAlreadyOnLoan() {
         BookRequest bookRequest = new BookRequest(
                 "Clean Code",
                 "Robert C. Martin",
@@ -163,7 +163,7 @@ public class LoanIntegrationTest {
                 String.class
         );
 
-        assertEquals(HttpStatus.BAD_REQUEST, secondResponse.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, secondResponse.getStatusCode());
         assertNotNull(secondResponse.getBody());
         assertTrue(secondResponse.getBody().contains("Book with id " + bookId + " is already on loan"));
     }
@@ -295,12 +295,12 @@ public class LoanIntegrationTest {
                 .filter(response -> response.getStatusCode() == HttpStatus.CREATED)
                 .count();
 
-        long badRequestCount = responses.stream()
-                .filter(response -> response.getStatusCode() == HttpStatus.BAD_REQUEST)
+        long conflictCount = responses.stream()
+                .filter(response -> response.getStatusCode() == HttpStatus.CONFLICT)
                 .count();
 
         assertEquals(1, createdCount);
-        assertEquals(1, badRequestCount);
+        assertEquals(1, conflictCount);
 
         assertTrue(responses.stream().anyMatch(response ->
                 response.getBody() != null &&
@@ -377,12 +377,12 @@ public class LoanIntegrationTest {
                 .filter(response -> response.getStatusCode() == HttpStatus.CREATED)
                 .count();
 
-        long badRequestCount = responses.stream()
-                .filter(response -> response.getStatusCode() == HttpStatus.BAD_REQUEST)
+        long conflictCount = responses.stream()
+                .filter(response -> response.getStatusCode() == HttpStatus.CONFLICT)
                 .count();
 
         assertEquals(1, createdCount);
-        assertEquals(requestCount - 1, badRequestCount);
+        assertEquals(requestCount - 1, conflictCount);
 
         assertTrue(responses.stream().anyMatch(response ->
                 response.getBody() != null &&
@@ -461,12 +461,12 @@ public class LoanIntegrationTest {
                 .filter(response -> response.getStatusCode() == HttpStatus.CREATED)
                 .count();
 
-        long badRequestCount = responses.stream()
-                .filter(response -> response.getStatusCode() == HttpStatus.BAD_REQUEST)
+        long conflictCount = responses.stream()
+                .filter(response -> response.getStatusCode() == HttpStatus.CONFLICT)
                 .count();
 
         assertEquals(requestCount, createdCount);
-        assertEquals(0, badRequestCount);
+        assertEquals(0, conflictCount);
     }
 
     @Test
