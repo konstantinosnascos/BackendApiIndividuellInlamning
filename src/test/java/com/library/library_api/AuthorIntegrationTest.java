@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -186,5 +188,101 @@ public class AuthorIntegrationTest {
         assertEquals(1, response.getBody().length);
         assertEquals("Refactoring", response.getBody()[0].title());
         assertEquals("Martin Fowler", response.getBody()[0].author());
+    }
+
+    @Test
+    void updateAuthor_shouldReturn200AndUpdatedAuthor() {
+        AuthorRequest createRequest = new AuthorRequest("Robert C. Martin");
+
+        ResponseEntity<AuthorResponse> createResponse = restTemplate.postForEntity(
+                "/api/v1/authors",
+                createRequest,
+                AuthorResponse.class
+        );
+
+        Long authorId = createResponse.getBody().id();
+
+        AuthorRequest updateRequest = new AuthorRequest("Uncle Bob");
+
+        ResponseEntity<AuthorResponse> response = restTemplate.exchange(
+                "/api/v1/authors/" + authorId,
+                HttpMethod.PUT,
+                new HttpEntity<>(updateRequest),
+                AuthorResponse.class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(authorId, response.getBody().id());
+        assertEquals("Uncle Bob", response.getBody().name());
+    }
+
+    @Test
+    void deleteAuthor_shouldReturn204WhenAuthorHasNoBooks() {
+        AuthorRequest createRequest = new AuthorRequest("Author Without Books");
+
+        ResponseEntity<AuthorResponse> createResponse = restTemplate.postForEntity(
+                "/api/v1/authors",
+                createRequest,
+                AuthorResponse.class
+        );
+
+        Long authorId = createResponse.getBody().id();
+
+        ResponseEntity<Void> deleteResponse = restTemplate.exchange(
+                "/api/v1/authors/" + authorId,
+                HttpMethod.DELETE,
+                null,
+                Void.class
+        );
+
+        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
+
+        ResponseEntity<String> getResponse = restTemplate.getForEntity(
+                "/api/v1/authors/" + authorId,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
+    }
+
+    @Test
+    void deleteAuthor_shouldReturn400WhenAuthorHasBooks() {
+        AuthorRequest authorRequest = new AuthorRequest("Martin Fowler");
+
+        ResponseEntity<AuthorResponse> createAuthorResponse = restTemplate.postForEntity(
+                "/api/v1/authors",
+                authorRequest,
+                AuthorResponse.class
+        );
+
+        Long authorId = createAuthorResponse.getBody().id();
+
+        BookRequest bookRequest = new BookRequest(
+                "Refactoring",
+                "Martin Fowler",
+                "978-0201485677",
+                1999,
+                authorId
+        );
+
+        ResponseEntity<BookResponse> createBookResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                bookRequest,
+                BookResponse.class
+        );
+
+        assertEquals(HttpStatus.CREATED, createBookResponse.getStatusCode());
+
+        ResponseEntity<String> deleteResponse = restTemplate.exchange(
+                "/api/v1/authors/" + authorId,
+                HttpMethod.DELETE,
+                null,
+                String.class
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, deleteResponse.getStatusCode());
+        assertNotNull(deleteResponse.getBody());
+        assertTrue(deleteResponse.getBody().contains("cannot be deleted because they have books"));
     }
 }

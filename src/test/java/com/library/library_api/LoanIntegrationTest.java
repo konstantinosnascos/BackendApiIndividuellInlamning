@@ -570,4 +570,115 @@ public class LoanIntegrationTest {
         assertEquals(bookId, secondLoanResponse.getBody().bookId());
         assertNull(secondLoanResponse.getBody().returnDate());
     }
+
+    @Test
+    void getLoanById_shouldReturn200AndCorrectLoan() {
+        BookRequest bookRequest = new BookRequest(
+                "Clean Code",
+                "Robert C. Martin",
+                "978-0132350884",
+                2008,
+                null
+        );
+
+        ResponseEntity<BookResponse> createBookResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                bookRequest,
+                BookResponse.class
+        );
+
+        Long bookId = createBookResponse.getBody().id();
+
+        LoanRequest loanRequest = new LoanRequest(bookId, null);
+
+        ResponseEntity<LoanResponse> createLoanResponse = restTemplate.postForEntity(
+                "/api/v1/loans",
+                loanRequest,
+                LoanResponse.class
+        );
+
+        Long loanId = createLoanResponse.getBody().id();
+
+        ResponseEntity<LoanResponse> response = restTemplate.getForEntity(
+                "/api/v1/loans/" + loanId,
+                LoanResponse.class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(loanId, response.getBody().id());
+        assertEquals(bookId, response.getBody().bookId());
+        assertEquals("Clean Code", response.getBody().bookTitle());
+    }
+
+    @Test
+    void getLoanById_shouldReturn404WhenLoanDoesNotExist() {
+        ResponseEntity<String> response = restTemplate.getForEntity(
+                "/api/v1/loans/9999",
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Loan with id 9999 not found"));
+    }
+
+    @Test
+    void deleteLoan_shouldReturn204AndRemoveLoan() {
+        BookRequest bookRequest = new BookRequest(
+                "Clean Code",
+                "Robert C. Martin",
+                "978-0132350884",
+                2008,
+                null
+        );
+
+        ResponseEntity<BookResponse> createBookResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                bookRequest,
+                BookResponse.class
+        );
+
+        Long bookId = createBookResponse.getBody().id();
+
+        LoanRequest loanRequest = new LoanRequest(bookId, null);
+
+        ResponseEntity<LoanResponse> createLoanResponse = restTemplate.postForEntity(
+                "/api/v1/loans",
+                loanRequest,
+                LoanResponse.class
+        );
+
+        Long loanId = createLoanResponse.getBody().id();
+
+        ResponseEntity<Void> deleteResponse = restTemplate.exchange(
+                "/api/v1/loans/" + loanId,
+                HttpMethod.DELETE,
+                null,
+                Void.class
+        );
+
+        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
+
+        ResponseEntity<String> getResponse = restTemplate.getForEntity(
+                "/api/v1/loans/" + loanId,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
+    }
+
+    @Test
+    void deleteLoan_shouldReturn404WhenLoanDoesNotExist() {
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/loans/9999",
+                HttpMethod.DELETE,
+                null,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Loan with id 9999 not found"));
+    }
 }

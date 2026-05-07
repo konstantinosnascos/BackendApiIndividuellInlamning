@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -162,5 +164,94 @@ public class BookIntegrationTest {
         assertTrue(response.getBody().contains("\"version\":\"v2\""));
         assertTrue(response.getBody().contains("Clean Code"));
         assertTrue(response.getBody().contains("\"available\":true"));
+    }
+
+    @Test
+    void updateBook_shouldReturn200AndUpdatedBook() {
+        BookRequest createRequest = new BookRequest(
+                "Clean Code",
+                "Robert C. Martin",
+                "978-0132350884",
+                2008,
+                null
+        );
+
+        ResponseEntity<BookResponse> createResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                createRequest,
+                BookResponse.class
+        );
+
+        Long bookId = createResponse.getBody().id();
+
+        BookRequest updateRequest = new BookRequest(
+                "Clean Code Updated",
+                "Robert C. Martin",
+                "978-0132350884",
+                2009,
+                null
+        );
+
+        ResponseEntity<BookResponse> response = restTemplate.exchange(
+                "/api/v1/books/" + bookId,
+                HttpMethod.PUT,
+                new HttpEntity<>(updateRequest),
+                BookResponse.class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(bookId, response.getBody().id());
+        assertEquals("Clean Code Updated", response.getBody().title());
+        assertEquals(2009, response.getBody().publishedYear());
+    }
+
+    @Test
+    void deleteBook_shouldReturn204AndRemoveBook() {
+        BookRequest createRequest = new BookRequest(
+                "Effective Java",
+                "Joshua Bloch",
+                "978-0134685991",
+                2018,
+                null
+        );
+
+        ResponseEntity<BookResponse> createResponse = restTemplate.postForEntity(
+                "/api/v1/books",
+                createRequest,
+                BookResponse.class
+        );
+
+        Long bookId = createResponse.getBody().id();
+
+        ResponseEntity<Void> deleteResponse = restTemplate.exchange(
+                "/api/v1/books/" + bookId,
+                HttpMethod.DELETE,
+                null,
+                Void.class
+        );
+
+        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
+
+        ResponseEntity<String> getResponse = restTemplate.getForEntity(
+                "/api/v1/books/" + bookId,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
+    }
+
+    @Test
+    void deleteBook_shouldReturn404WhenBookDoesNotExist() {
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/books/9999",
+                HttpMethod.DELETE,
+                null,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Book with id 9999 not found"));
     }
 }
