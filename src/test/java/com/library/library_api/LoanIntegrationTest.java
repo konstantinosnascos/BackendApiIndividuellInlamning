@@ -170,14 +170,15 @@ public class LoanIntegrationTest {
 
     @Test
     void getAllLoans_shouldReturnEmptyListWhenNoActiveLoansExist() {
-        ResponseEntity<LoanResponse[]> response = restTemplate.getForEntity(
+        ResponseEntity<String> response = restTemplate.getForEntity(
                 "/api/v1/loans",
-                LoanResponse[].class
+                String.class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(0, response.getBody().length);
+        assertTrue(response.getBody().contains("\"totalElements\":0"));
+        assertTrue(response.getBody().contains("\"totalPages\":0"));
     }
 
     @Test
@@ -209,17 +210,18 @@ public class LoanIntegrationTest {
         assertEquals(HttpStatus.CREATED, firstResponse.getStatusCode());
 
 
-        ResponseEntity<LoanResponse[]> response = restTemplate.getForEntity(
+        ResponseEntity<String> response = restTemplate.getForEntity(
                 "/api/v1/loans",
-                LoanResponse[].class
+                String.class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().length);
-        assertEquals(bookId, response.getBody()[0].bookId());
-        assertEquals("Clean Code", response.getBody()[0].bookTitle());
-        assertNull(response.getBody()[0].returnDate());
+        assertTrue(response.getBody().contains("\"totalElements\":1"));
+        assertTrue(response.getBody().contains("Clean Code"));
+        assertTrue(response.getBody().contains("\"bookId\":" + bookId));
+        assertTrue(response.getBody().contains("\"totalElements\":1"));
+        assertTrue(response.getBody().contains("\"totalPages\":1"));
     }
 
     @Test

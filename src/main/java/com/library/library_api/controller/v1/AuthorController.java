@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +50,7 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getAuthorById(id));
     }
 
+    //http://localhost:8080/api/v1/authors/1/books?page=0&size=1 visar en bok
     @Operation(summary = "Get books by author ID", description = "Returns a list of books written by the specified author"
     )
     @ApiResponses({
@@ -54,15 +58,19 @@ public class AuthorController {
             @ApiResponse(responseCode = "404", description = "Author not found")
     })
     @GetMapping("/{id}/books")
-    public ResponseEntity<List<BookResponse>> getBooksByAuthorId(@PathVariable long id) {
-        return ResponseEntity.ok(authorService.getBooksByAuthorId(id));
+    public ResponseEntity<Page<BookResponse>> getBooksByAuthorId(@PathVariable Long id,
+                                                                 @PageableDefault(size=20, sort = "title")
+                                                                 Pageable pageable) {
+        return ResponseEntity.ok(
+                authorService.getBooksByAuthorId(id, pageable));
     }
 
+    //http://localhost:8080/api/v1/authors?page=0&size=2 för att testa pagination
     @Operation(summary = "Get all authors", description = "Returns a list of all authors")
     @ApiResponse(responseCode = "200", description = "Successful retrieval of all authors")
     @GetMapping
-    public ResponseEntity<List<AuthorResponse>> getAllAuthors() {
-        return ResponseEntity.ok(authorService.getAllAuthors());
+    public ResponseEntity<Page<AuthorResponse>> getAllAuthors(@PageableDefault(size=20, sort = "name")Pageable pageable) {
+        return ResponseEntity.ok(authorService.getAllAuthors(pageable));
     }
 
     @Operation(summary = "Update author by ID", description = "Updates an existing author and returns the updated author")

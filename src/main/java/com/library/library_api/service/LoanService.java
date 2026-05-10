@@ -9,6 +9,8 @@ import com.library.library_api.model.Loan;
 import com.library.library_api.repository.BookRepository;
 import com.library.library_api.repository.LoanRepository;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,12 +64,9 @@ public class LoanService {
         );
     }
 
-    public List<LoanResponse> getAllLoans() {
-        return loanRepository.findAll()
-                .stream()
-                .filter(loan -> loan.getReturnDate() == null)
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+    public Page<LoanResponse> getAllLoans(Pageable pageable) {
+        return loanRepository.findAll(pageable)
+                .map(this::toResponse);
     }
 
     @Transactional

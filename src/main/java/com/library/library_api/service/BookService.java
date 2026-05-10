@@ -14,8 +14,10 @@ import com.library.library_api.repository.BookRepository;
 import com.library.library_api.repository.LoanRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,11 +51,9 @@ public class BookService {
     }
 
     @Cacheable("books")
-    public List<BookResponse> getAllBooks() {
-        return bookRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+    public Page<BookResponse> getAllBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable)
+                .map(this::toResponse);
     }
 
     private BookResponse toResponse(Book book){
@@ -72,11 +72,9 @@ public class BookService {
     }
 
     @Cacheable("booksV2")
-    public List<BookResponseV2> getAllBooksV2() {
-        return bookRepository.findAll()
-                .stream()
-                .map(this::toResponseV2)
-                .collect(Collectors.toList());
+    public Page<BookResponseV2> getAllBooksV2(Pageable pageable) {
+        return bookRepository.findAll(pageable)
+                .map(this::toResponseV2);
     }
 
     private BookResponseV2 toResponseV2(Book book) {

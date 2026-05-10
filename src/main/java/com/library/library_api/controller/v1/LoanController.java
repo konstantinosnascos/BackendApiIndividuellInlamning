@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +46,8 @@ public class LoanController {
     @Operation(summary = "Get all loans", description = "Return a list of all loans")
     @ApiResponse(responseCode = "200", description = "Successful retrieval of all loans")
     @GetMapping
-    public ResponseEntity<List<LoanResponse>> getAllLoans() {
-        return ResponseEntity.ok(loanService.getAllLoans());
+    public ResponseEntity<Page<LoanResponse>> getAllLoans(Pageable pageable) {
+        return ResponseEntity.ok(loanService.getAllLoans(pageable));
     }
 
     //autogenererade @apiresponse 409,kolla upp 409(såg också nämnt i kursmaterial någonstans och inte satt upp felhantering för 409)

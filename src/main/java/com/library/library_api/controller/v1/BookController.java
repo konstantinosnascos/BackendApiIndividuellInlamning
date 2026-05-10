@@ -8,9 +8,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -37,11 +41,13 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookResponse);
     }
 
+    //http://localhost:8080/api/v1/books?page=0&size=1 för att testa pagination
     @Operation(summary = "Get all books", description = "Return a list of all books")
     @ApiResponse(responseCode = "200", description = "Successful retrieval of all books")
     @GetMapping
-    public ResponseEntity<List<BookResponse>> getAllBooks() {
-        return ResponseEntity.ok(bookService.getAllBooks());
+    public ResponseEntity<Page<BookResponse>> getAllBooks(
+            @PageableDefault(size=20, sort = "title") Pageable pageable) {
+        return ResponseEntity.ok(bookService.getAllBooks(pageable));
     }
 
     @Operation(summary = "Get book by ID", description = "Returns a book by ID")

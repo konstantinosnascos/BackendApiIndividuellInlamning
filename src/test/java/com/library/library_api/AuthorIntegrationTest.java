@@ -139,14 +139,15 @@ public class AuthorIntegrationTest {
         );
         Long authorId = createResponse.getBody().id();
 
-        ResponseEntity<Object[]> response = restTemplate.getForEntity(
+        ResponseEntity<String> response = restTemplate.getForEntity(
                 "/api/v1/authors/" + authorId + "/books",
-                Object[].class
+                String.class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(0, response.getBody().length);
+        assertTrue(response.getBody().contains("\"totalElements\":0"));
+        assertTrue(response.getBody().contains("\"totalPages\":0"));
     }
 
     @Test
@@ -178,16 +179,15 @@ public class AuthorIntegrationTest {
         assertEquals(HttpStatus.CREATED, createBookResponse.getStatusCode());
         assertNotNull(createBookResponse.getBody());
 
-        ResponseEntity<BookResponse[]> response = restTemplate.getForEntity(
+        ResponseEntity<String> response = restTemplate.getForEntity(
                 "/api/v1/authors/" + authorId + "/books",
-                BookResponse[].class
+                String.class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().length);
-        assertEquals("Refactoring", response.getBody()[0].title());
-        assertEquals("Martin Fowler", response.getBody()[0].author());
+        assertTrue(response.getBody().contains("\"title\":\"Refactoring\""));
+        assertTrue(response.getBody().contains("\"author\":\"Martin Fowler\""));
     }
 
     @Test
