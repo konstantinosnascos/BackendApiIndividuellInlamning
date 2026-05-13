@@ -2,6 +2,7 @@ package com.library.library_api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
@@ -25,8 +26,24 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-ui.html"
                 ).permitAll()
-                        .requestMatchers("/**").permitAll()
-                        .anyRequest().authenticated()
+
+
+                .requestMatchers(HttpMethod.GET,
+                        "/api/v1/books/**",
+                        "/api/v1/authors/**",
+                        "/api/v1/loans/**"
+                        ).permitAll()
+                .requestMatchers(HttpMethod.POST,
+                        "/api/v1/books/**",
+                        "/api/v1/authors/**",
+                        "/api/v1/loans/**"
+                        ).hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.DELETE,
+                        "/api/v1/books/**",
+                        "/api/v1/authors/**",
+                        "/api/v1/loans/**"
+                            ).hasRole("ADMIN")
+                .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
 
