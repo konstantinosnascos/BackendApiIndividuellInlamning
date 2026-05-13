@@ -50,9 +50,13 @@ public class AuthorIntegrationTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
+    @Autowired
+    private TestRestTemplate testRestTemplateExtra;
+
+
     @BeforeEach
     void setUp() {
-        restTemplate=testRestTemplate.withBasicAuth("admin", "admin123");
+        restTemplate = testRestTemplate.withBasicAuth("admin", "admin123");
         loanRepository.deleteAll();
         bookRepository.deleteAll();
         authorRepository.deleteAll();
@@ -66,7 +70,7 @@ public class AuthorIntegrationTest {
                 "/api/v1/authors",
                 request,
                 AuthorResponse.class
-                );
+        );
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -291,4 +295,63 @@ public class AuthorIntegrationTest {
         assertNotNull(deleteResponse.getBody());
         assertTrue(deleteResponse.getBody().contains("cannot be deleted because they have books"));
     }
+
+    @Test
+    void createAuthor_shoulFailWithoutLoginCredentialsAndReturn401() {
+        AuthorRequest request = new AuthorRequest("Robert C. Martin");
+
+        ResponseEntity<AuthorResponse> response = testRestTemplateExtra.postForEntity(
+                "/api/v1/authors",
+                request,
+                AuthorResponse.class
+        );
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void deleteAuthor_shoulFailWithoutLoginCredentialsAndReturn401() {
+        AuthorRequest request = new AuthorRequest("Robert C. Martin");
+
+        ResponseEntity<AuthorResponse> response = testRestTemplateExtra.withBasicAuth("user", "password").postForEntity(
+                "/api/v1/authors",
+                request,
+                AuthorResponse.class
+        );
+
+        Long authorId = response.getBody().id();
+
+        ResponseEntity<Void> deleteResponse = testRestTemplateExtra.exchange(
+                "/api/v1/authors/" + authorId,
+                HttpMethod.DELETE,
+                null,
+                Void.class
+        );
+        assertEquals(HttpStatus.UNAUTHORIZED, deleteResponse.getStatusCode());
+        assertNull(deleteResponse.getBody());
+    }
+
+    @Test
+    void deleteAuthor_shoulFailWithUserLoginCredentialsAndReturn403() {
+        AuthorRequest request = new AuthorRequest("Robert C. Martin");
+
+        ResponseEntity<AuthorResponse> response = testRestTemplateExtra.withBasicAuth("user", "password").postForEntity(
+                "/api/v1/authors",
+                request,
+                AuthorResponse.class
+        );
+
+        Long authorId = response.getBody().id();
+
+        ResponseEntity<Void> deleteResponse = testRestTemplateExtra.withBasicAuth("user", "password").exchange(
+                "/api/v1/authors/" + authorId,
+                HttpMethod.DELETE,
+                null,
+                Void.class
+        );
+        assertEquals(HttpStatus.FORBIDDEN, deleteResponse.getStatusCode());
+        assertNull(deleteResponse.getBody());
+    }
 }
+
