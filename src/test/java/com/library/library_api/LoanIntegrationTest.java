@@ -17,6 +17,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = "loan.create.delay-ms=200")
+@ActiveProfiles("test")
 public class LoanIntegrationTest {
 
     // POST /api/v1/loans -> 201 create loan -klar
@@ -56,9 +58,12 @@ public class LoanIntegrationTest {
 
     @Autowired
     private AuthorRepository authorRepository;
+    @Autowired
+    private TestRestTemplate testRestTemplate;
 
     @BeforeEach
     void setUp() {
+        restTemplate=testRestTemplate.withBasicAuth("admin", "admin123");
         loanRepository.deleteAll();
         bookRepository.deleteAll();
         authorRepository.deleteAll();

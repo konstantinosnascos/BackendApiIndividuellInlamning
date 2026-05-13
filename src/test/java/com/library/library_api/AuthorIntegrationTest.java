@@ -17,10 +17,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public class AuthorIntegrationTest {
 
     // POST /api/v1/authors -> 201 create author -klar
@@ -45,8 +47,12 @@ public class AuthorIntegrationTest {
     @Autowired
     private AuthorRepository authorRepository;
 
+    @Autowired
+    private TestRestTemplate testRestTemplate;
+
     @BeforeEach
     void setUp() {
+        restTemplate=testRestTemplate.withBasicAuth("admin", "admin123");
         loanRepository.deleteAll();
         bookRepository.deleteAll();
         authorRepository.deleteAll();

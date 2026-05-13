@@ -16,10 +16,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public class BookIntegrationTest {
 
     // POST /api/v1/books -> 201 create book
@@ -41,15 +43,19 @@ public class BookIntegrationTest {
     @Autowired
     private AuthorRepository authorRepository;
 
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private TestRestTemplate testRestTemplate;
+
     @BeforeEach
     void setUp() {
+        restTemplate=testRestTemplate.withBasicAuth("admin", "admin123");
         loanRepository.deleteAll();
         bookRepository.deleteAll();
         authorRepository.deleteAll();
     }
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     @Test
     void createBook_shouldReturn201AndSavedBook() {

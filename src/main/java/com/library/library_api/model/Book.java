@@ -16,7 +16,7 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
-    @Size(min = 3, max = 15)
+    @Size(min = 3, max = 20)
     private String isbn;
 
     @Min(-5000)
