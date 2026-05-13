@@ -1,6 +1,7 @@
 package com.library.library_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "books")
@@ -10,15 +11,21 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(min = 1, max = 200)
     @Column(nullable = false)
     private String title;
 
+    @Size(min = 3, max = 15)
     private String isbn;
 
+    @Min(-5000)
+    @Max(2100)
     private Integer publishedYear;
 
     private boolean available = true;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;

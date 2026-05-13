@@ -1,6 +1,7 @@
 package com.library.library_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
@@ -12,10 +13,12 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
+    @NotNull
     @Column(nullable = false)
     private LocalDate loanDate;
 
