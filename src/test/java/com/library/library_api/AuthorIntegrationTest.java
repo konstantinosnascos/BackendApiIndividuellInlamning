@@ -25,16 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 public class AuthorIntegrationTest {
 
-    // POST /api/v1/authors -> 201 create author -klar
-    // POST /api/v1/authors -> 400 blank name -klar
-
-    // GET /api/v1/authors/{id} -> 200 existing author -klar
-    // GET /api/v1/authors/{id} -> 404 missing author -klar
-
-    // GET /api/v1/authors/{id}/books -> 200 empty list when author has no books
-    // GET /api/v1/authors/{id}/books -> 200 returns books for author
-    // GET /api/v1/authors/{id}/books -> 404 missing author
-
     @Autowired
     private TestRestTemplate restTemplate;
 
