@@ -61,3 +61,38 @@ Data skapas om vid varje uppstart eftersom ddl-auto är satt till create-drop
 Skapande av lån skyddas med transaktioner och pessimistic locking för att undvika race conditions
 Tillgänglighet för böcker i v2 beräknas baserat på om det finns ett aktivt lån eller inte
 Alla integrationstester passerar. För manuell testning i terminal eller via postman skapas ett mindre dataset vid uppstart.
+
+
+För att köra programmet efter implementering av security:
+
+Starta Vault.
+Öppna en terminal och skriv: 
+vault server -dev -dev-root-token-id="my-dev-root-token"
+Öppna en till terminal och skriv: 
+$env:VAULT_ADDR="http://127.0.0.1:8200"
+I en ny terminal skriv in:
+vault kv put secret/library-api
+db-username=postgres
+db-password=yourpassword
+app.security.user.username=user
+app.security.user.password=password
+app.security.admin.username=admin
+app.security.admin.password=admin123
+
+Starta appen genom att skriva: mvn spring-boot:run
+
+När appen är igång kan swagger dokumentation nås på:
+
+http://localhost:8080/swagger-ui/index.html
+
+USER:
+username: user
+password: password
+
+ADMIN:
+username: admin
+password: admin123
+
+behörigheter:
+user: get, patch, post
+admin: delete
