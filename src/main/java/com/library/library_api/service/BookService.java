@@ -34,7 +34,7 @@ public class BookService {
         this.loanRepository = loanRepository;
     }
 
-    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
+    //@CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public BookResponse createBook(BookRequest bookRequest) {
         Author author = resolveAuthor(bookRequest);
 
@@ -50,7 +50,7 @@ public class BookService {
         return toResponse(savedBook);
     }
 
-    @Cacheable("books")
+    //@Cacheable("books")
     public Page<BookResponse> getAllBooks(Pageable pageable) {
         return bookRepository.findAll(pageable)
                 .map(this::toResponse);
@@ -65,13 +65,13 @@ public class BookService {
                 book.getPublishedYear());
     }
 
-    @Cacheable(value = "book", key = "#id")
+    //@Cacheable(value = "book", key = "#id")
     public BookResponse getBookById(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
         return toResponse(book);
     }
 
-    @Cacheable("booksV2")
+    //@Cacheable("booksV2")
     public Page<BookResponseV2> getAllBooksV2(Pageable pageable) {
         return bookRepository.findAll(pageable)
                 .map(this::toResponseV2);
@@ -90,7 +90,7 @@ public class BookService {
                 );
     }
 
-    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
+    //@CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public BookResponse updateBook(Long id, BookRequest bookRequest) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
@@ -106,7 +106,7 @@ public class BookService {
         return toResponse(savedBook);
     }
 
-    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
+    //@CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public void deleteBook(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));

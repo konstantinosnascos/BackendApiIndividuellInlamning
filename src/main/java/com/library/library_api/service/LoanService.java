@@ -34,7 +34,7 @@ public class LoanService {
     }
 
     @Transactional
-    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
+    //@CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public LoanResponse createLoan(LoanRequest loanRequest) {
         Book book = bookRepository.findByIdForUpdate(
                 loanRequest.bookId())
@@ -70,7 +70,7 @@ public class LoanService {
     }
 
     @Transactional
-    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
+    //@CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public LoanResponse returnLoanedBook(Long loanId, LocalDate returnDate) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new LoanNotFoundException(loanId));
@@ -107,7 +107,7 @@ public class LoanService {
     }
 
     @Transactional
-    @CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
+    //@CacheEvict(value = {"books", "booksV2", "book"}, allEntries = true)
     public void deleteLoan(Long id) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new LoanNotFoundException(id));
