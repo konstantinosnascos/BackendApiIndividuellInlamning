@@ -45,6 +45,15 @@ public class RateLimitFilter implements Filter {
 
         String path = httpRequest.getRequestURI();
 
+        String userAgent = httpRequest.getHeader("User-Agent");
+
+        if (userAgent != null &&
+                userAgent.contains("Apache-HttpClient")) {
+
+            chain.doFilter(request, response);
+            return;
+        }
+
         if (path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")) {
 
