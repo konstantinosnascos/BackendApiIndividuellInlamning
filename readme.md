@@ -36,6 +36,8 @@ POST /api/v1/loans
 GET /api/v1/loans
 PATCH /api/v1/loans/{id}/return
 GET /api/v2/books
+OBS PUT är tillagt nu också
+
 Så startar du applikationen:
 
 Kör appen:
@@ -64,21 +66,56 @@ Alla integrationstester passerar. För manuell testning i terminal eller via pos
 
 
 För att köra programmet efter implementering av security:
+Starta Vault:
+vault server -dev -dev-root-token-id="test-token"
 
-Starta Vault.
-Öppna en terminal och skriv: 
-vault server -dev -dev-root-token-id="my-dev-root-token"
-Öppna en till terminal och skriv: 
+token = test-token
+
+I nästa terminal:
+
 $env:VAULT_ADDR="http://127.0.0.1:8200"
-I en ny terminal skriv in:
-vault kv put secret/library-api
-db-username=postgres
-db-password=yourpassword
-app.security.user.username=user
-app.security.user.password=password
-app.security.admin.username=admin
-app.security.admin.password=admin123
+$env:VAULT_TOKEN="test-token"
 
+vault kv put secret/library-api db-username=admin db-password=admin123
+
+I app.properties har du detta under, men ändra vad du själv anser är relevant eller lättare för testning:
+
+spring.application.name=library-api
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.h2.console.enabled=true
+spring.config.import=vault://
+spring.cloud.vault.uri=http://127.0.0.1:8200
+spring.cloud.vault.token=test-token
+spring.cloud.vault.kv.enabled=true
+spring.datasource.username=${db-username}
+spring.datasource.password=${db-password}
+
+kör denna korta raden i en annan terminal än din vault server:
+vault kv put secret/library-api db-username=admin db-password=admin123 app.security.user.username=user app.security.user.password=password app.security.admin.username=admin app.security.admin.password=admin123
+
+
+Starta appen genom att skriva:
+mvn spring-boot:run
+
+om det inte startar är något fel ifyllt. Skriv gärna om det bråkar
+
+När appen är igång kan swagger dokumentation nås på:
+http://localhost:8080/swagger-ui/index.html
+
+USER:
+username: user
+password: password
+
+ADMIN:
+username: admin
+password: admin123
+
+behörigheter:
+user: get, patch, post
+admin: delete
 Starta appen genom att skriva: mvn spring-boot:run
 
 När appen är igång kan swagger dokumentation nås på:
@@ -96,3 +133,28 @@ password: admin123
 behörigheter:
 user: get, patch, post
 admin: delete
+
+
+För att testa i postman fyll i admin som användarnamn och admin123 som lösenord
+
+för att hämta ett redan skapat lån
+GET http://localhost:8080/api/v1/loans/1
+
+för att returnera redan lånad bok
+PATCH  http://localhost:8080/api/v1/loans/1/return
+
+skriv detta för att låna redan skapad bok
+POST http://localhost:8080/api/v1/loans
+och i body skriv detta
+{
+"bookId": 1,
+"loanDate": "2026-05-22"
+}
+låna igen utan att ändra något och du får error 409
+
+detta och mer körs i testerna redan, 37st alla ska fungera, annars skriv gärna, så jag kan rätta vad jag gjort fel. 
+testnamnen är tydliga och förklara vad dom testar. Använder inte Mvc som vi gjort senaste workshoppar, använder istället
+testresttemplate. Testerna täcker inte 100% men större delen av flödet. Kört tester med coverage och rapport finns redan klar.
+
+
+performancetesting med utan cache, testa med index också?

@@ -1,5 +1,6 @@
 package com.library.library_api.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,6 +21,18 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+
+    @Value("${app.security.user.username}")
+    private String username;
+
+    @Value("${app.security.user.password}")
+    private String password;
+
+    @Value("${app.security.admin.username}")
+    private String adminName;
+
+    @Value("${app.security.admin.password}")
+    private String adminPassword;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -71,14 +84,14 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails user= User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("password"))
+                .username(username)
+                .password(passwordEncoder.encode(password))
                 .roles("USER")
                 .build();
 
         UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("admin123"))
+                .username(adminName)
+                .password(passwordEncoder.encode(adminPassword))
                 .roles("ADMIN")
                 .build();
 
