@@ -6,7 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "loans")
+@Table(
+        name = "loans",
+        indexes = {
+                @Index(name = "idx_loans_book_id", columnList = "book_id"),
+                @Index(name = "idx_loans_return_date", columnList = "return_date"),
+                @Index(name = "idx_loans_book_return", columnList = "book_id, return_date")
+        })
 public class Loan {
 
     @Id
