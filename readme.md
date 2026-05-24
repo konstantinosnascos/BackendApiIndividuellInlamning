@@ -155,6 +155,42 @@ låna igen utan att ändra något och du får error 409
 detta och mer körs i testerna redan, 37st alla ska fungera, annars skriv gärna, så jag kan rätta vad jag gjort fel. 
 testnamnen är tydliga och förklara vad dom testar. Använder inte Mvc som vi gjort senaste workshoppar, använder istället
 testresttemplate. Testerna täcker inte 100% men större delen av flödet. Kört tester med coverage och rapport finns redan klar.
+Om du vill testa fler endpoints så kan du kolla på swagger-dokumentation.
 
 
 performancetesting med utan cache, testa med index också?
+
+Aggregate Report med cache för GET http://api/v1/books?page=0&size=5000 med 1000 threads:
+Label		    Samples	Average	Median	90% Line	95% Line	99%Line	Min	Maximum	Error% Throughput	        Received KB/sec	    Sent KB/sec
+HTTP Request	1000	54	    5	    25	        576	        811	    3	901	    0.0	    99.77052778609199	20448.866045595132	14.127662625960292
+TOTAL	        1000	54	    5	    25	        576	        811	    3	901	    0.0	    99.77052778609199	20448.866045595132	14.127662625960292
+
+Aggregate Report utan cache för GET http://api/v1/books?page=0&size=5000 med 1000 threads:
+Label		    Samples	Average	Median	90% Line	95% Line	99%Line	Min	Maximum	Error% Throughput	        Received KB/sec	    Sent KB/sec
+HTTP Request	1000	91	    25	    281	        629	        920	    14	1194	0.0	    99.59167413604223	20412.20838312917	14.102336669654417
+TOTAL	        1000	91	    25	    281	        629	        920	    14	1194	0.0	    99.59167413604223	20412.20838312917	14.102336669654417
+Fler outliers med caching, men median är mycket bättre än utan cache. Även snitt är bättre  med cache. 90% känns som det mest indikativa resultatet, i produktion skulle jag gissa att program inte stoppas och startas hela tiden, så caching består och behöver inte göras om hela tiden.
+
+Aggregate Report med cache(ingen cache på getAllLoans) för GET http://api/v1/loans?page=0&size=5000 med 1000 threads:
+Label		    Samples	Average	Median	90% Line	95% Line	99%Line	Min	Maximum	Error% Throughput	        Received KB/sec	    Sent KB/sec
+HTTP Request	1000	3963	4180	5511	    5688	    5829	189	5948	0.0	   63.18316800404372	11946.061319264549	8.946835313072597
+TOTAL	        1000	3963	4180	5511	    5688	    5829	189	5948	0.0	   63.18316800404372	11946.061319264549	8.946835313072597
+
+Aggregate Report utan cache för GET http://api/v1/loans?page=0&size=5000 med 1000 threads:
+Label		    Samples	Average	Median	90% Line	95% Line	99%Line	Min	Maximum	Error% Throughput	        Received KB/sec	    Sent KB/sec
+HTTP Request	1000	2894	2755	4966	    5143	    5313	142	6469	0.0	    65.37229522128523	12359.960286330652	9.25681914754527
+TOTAL	        1000	2894	2755	4966	    5143	    5313	142	6469	0.0	    65.37229522128523	12359.960286330652	9.25681914754527
+Det ser ut som att det fungerar bättre utan caching, kört 2 gånger för att testa och fick samma slutresultat. Dåligt strukturerat eller index kommer hjälpa kanske. Kanske index på getAllLoans också.
+
+Aggregate Report med caching + index + caching på getAllLoans för GET http://api/v1/loans?page=0&size=5000 med 1000 threads:
+Label		    Samples	Average	Median	90% Line	95% Line	99%Line	Min	Maximum	Error%	Throughput	        Received KB/sec	    Sent KB/sec
+HTTP Request	1000	112	    6	    1267	    1534	    1623	4	1623	0.0	    99.88014382740711	18884.37000599281	14.143184428685577
+TOTAL	        1000	112	    6	    1267	    1534	    1623	4	1623	0.0	    99.88014382740711	18884.37000599281	14.143184428685577
+
+Aggregate Report med caching (@Cacheable(value = "loans", key = "'loans:' + #pageable.pageNumber + ':' + #pageable.pageSize") på getallloans) för GET http://api/v1/loans?page=0&size=5000 med 1000 threads:
+Label		    Samples	Average	Median	90% Line	95% Line	99%Line	Min	Maximum	Error%	Throughput	        Received KB/sec	    Sent KB/sec
+HTTP Request	1000	77	    6	    968	        1246	    1346	4	1346	0.0	    99.89012086704625	18886.256367995207	14.144597193087606
+TOTAL	        1000	77	    6	    968	        1246	    1346	4	1346	0.0	    99.89012086704625	18886.256367995207	14.144597193087606
+
+Caching ger bättre resultat, var är viktigt, precis som att lägga på fel index kan göra körningar långsammare verkar caching göra körningar långsammare om caching inte är direkt kopplad till vad som hämtas. 
+
