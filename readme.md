@@ -158,7 +158,7 @@ testresttemplate. Testerna täcker inte 100% men större delen av flödet. Kört
 Om du vill testa fler endpoints så kan du kolla på swagger-dokumentation.
 
 
-performancetesting med utan cache, testa med index också?
+performancetesting med/utan cache
 
 Aggregate Report med cache för GET http://api/v1/books?page=0&size=5000 med 1000 threads:
 Label		    Samples	Average	Median	90% Line	95% Line	99%Line	Min	Maximum	Error% Throughput	        Received KB/sec	    Sent KB/sec
