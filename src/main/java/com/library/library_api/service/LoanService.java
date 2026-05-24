@@ -65,7 +65,7 @@ public class LoanService {
         );
     }
 
-    @Cacheable(value = "loans", key = "'loans:' + #pageable.pageNumber + ':' + #pageable.pageSize")
+    //@Cacheable(value = "loans", key = "'loans:' + #pageable.pageNumber + ':' + #pageable.pageSize")
     public Page<LoanResponse> getAllLoans(Pageable pageable) {
         return loanRepository.findAll(pageable)
                 .map(this::toResponse);
