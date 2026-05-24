@@ -9,6 +9,7 @@ import com.library.library_api.model.Loan;
 import com.library.library_api.repository.BookRepository;
 import com.library.library_api.repository.LoanRepository;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,7 @@ public class LoanService {
         );
     }
 
+    @Cacheable(value = "loans", key = "'loans:' + #pageable.pageNumber + ':' + #pageable.pageSize")
     public Page<LoanResponse> getAllLoans(Pageable pageable) {
         return loanRepository.findAll(pageable)
                 .map(this::toResponse);
