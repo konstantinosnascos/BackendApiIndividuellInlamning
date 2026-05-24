@@ -194,4 +194,5 @@ TOTAL	        1000	77	    6	    968	        1246	    1346	4	1346	0.0	    99.8901
 
 Caching ger bättre resultat, var är viktigt, precis som att lägga på fel index kan göra körningar långsammare verkar caching göra körningar långsammare om caching inte är direkt kopplad till vad som hämtas. 
 Kan va att caching kan optimeras bättre. Kan va att resultat ser olika ut beronde på om man har H2 eller en "riktig" databas som postgres. Osäker på hur stabilt det är med caching i produktion på loans med nuvarande implementation, men jag la till det ändå, för jag körde tester på det.
+Värt att nämna, ett test faila efter jag lagt till caching på getallloans, så jag hade behövt titta på både mina tester och kolla så all cahceevict stämmer om jag la till det nu. Men prestanda testerna känns ändå relevanta. 
 
