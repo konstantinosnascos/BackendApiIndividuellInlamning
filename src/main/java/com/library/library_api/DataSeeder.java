@@ -91,7 +91,7 @@ public class DataSeeder implements CommandLineRunner {
         // ---------- BOOKS ----------
         List<Book> books = new ArrayList<>();
 
-        for (int i = 1; i <= 20000; i++) {
+        for (int i = 1; i <= 200000; i++) {
 
             Author author = authors.get(i % authors.size());
 
@@ -107,7 +107,7 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         // ---------- LOANS ----------
-        for (int i = 1; i <= 5000; i++) {
+        for (int i = 1; i <= 50000; i++) {
 
             Book book = books.get(i % books.size());
 
